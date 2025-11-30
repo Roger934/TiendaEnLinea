@@ -60,9 +60,14 @@ app.get("/api/db-test", async (req, res) => {
 // ============================================
 // RUTAS
 // ============================================
+
 const authRoutes = require("./routes/authRoutes");
+const productRoutes = require("./routes/productRoutes"); // Productos
+const adminRoutes = require("./routes/adminRoutes"); // CRUD
 
 app.use("/api/auth", authRoutes);
+app.use("/api/products", productRoutes); // Productos
+app.use("/api/admin", adminRoutes); // CRUD
 
 // ============================================
 // MANEJO DE ERRORES 404
