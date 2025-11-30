@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TechStore - Componentes de PC</title>
+  </head>
+  <body>
+    <h1>TechStore - Tienda de Componentes de PC</h1>
+
+    <!-- Info del usuario si está logueado -->
+    <div id="userInfo">
+      <p id="userName"></p>
+      <button id="logoutBtn" style="display: none">Cerrar Sesión</button>
+    </div>
+    <p>
+      <a href="login.html">Iniciar Sesión</a> |
+      <a href="register.html">Registrarse</a>
+    </p>
+
+    <hr />
+
+    <h2>Filtros</h2>
+
+    <label>Categoría:</label>
+    <select id="categoriaSelect">
+      <option value="">Todas las categorías</option>
+      <option value="1">Procesadores</option>
+      <option value="2">Memorias RAM</option>
+      <option value="3">Tarjetas Gráficas</option>
+    </select>
+
+    <label>Precio mínimo:</label>
+    <input type="number" id="precioMin" placeholder="Ej: 100" />
+
+    <label>Precio máximo:</label>
+    <input type="number" id="precioMax" placeholder="Ej: 500" />
+
+    <label>
+      <input type="checkbox" id="enOferta" />
+      Solo productos en oferta
+    </label>
+
+    <button id="filtrarBtn">Filtrar</button>
+    <button id="limpiarBtn">Limpiar filtros</button>
+
+    <hr />
+
+    <h2>Productos (<span id="totalProductos">0</span>)</h2>
+
+    <div id="productosContainer">
+      <p>Cargando productos...</p>
+    </div>
+
+    <hr />
+
+    <h3>Carrito (<span id="cartCount">0</span> productos)</h3>
+    <button id="verCarritoBtn">Ver Carrito</button>
+
+    <script src="js/products.js"></script>
+  </body>
+</html>

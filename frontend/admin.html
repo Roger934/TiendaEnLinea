@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panel de Administración</title>
+  </head>
+  <body>
+    <h1>Panel de Administración - TechStore</h1>
+
+    <p id="adminInfo"></p>
+    <button id="logoutBtn">Cerrar Sesión</button>
+    <p><a href="index.html">← Volver a la tienda</a></p>
+
+    <hr />
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN 1: CREAR/EDITAR PRODUCTO -->
+    <!-- ============================================ -->
+    <h2>Gestión de Productos</h2>
+
+    <h3 id="formTitle">Crear Nuevo Producto</h3>
+
+    <form id="productForm">
+      <input type="hidden" id="productId" />
+
+      <label>Nombre:</label><br />
+      <input
+        type="text"
+        id="nombre"
+        required
+        style="width: 400px"
+      /><br /><br />
+
+      <label>Descripción:</label><br />
+      <textarea
+        id="descripcion"
+        required
+        style="width: 400px; height: 80px"
+      ></textarea
+      ><br /><br />
+
+      <label>Precio:</label><br />
+      <input type="number" id="precio" step="0.01" required /><br /><br />
+
+      <label>URL de Imagen:</label><br />
+      <input
+        type="text"
+        id="imagen_url"
+        placeholder="/images/producto.jpg"
+        style="width: 400px"
+      /><br /><br />
+
+      <label>Stock:</label><br />
+      <input type="number" id="stock" required /><br /><br />
+
+      <label>Categoría:</label><br />
+      <select id="categoria_id" required>
+        <option value="1">Procesadores</option>
+        <option value="2">Memorias RAM</option>
+        <option value="3">Tarjetas Gráficas</option></select
+      ><br /><br />
+
+      <label>
+        <input type="checkbox" id="en_oferta" />
+        En oferta </label
+      ><br /><br />
+
+      <button type="submit" id="submitBtn">Crear Producto</button>
+      <button type="button" id="cancelBtn" style="display: none">
+        Cancelar
+      </button>
+    </form>
+
+    <p id="formMessage"></p>
+
+    <hr />
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN 2: LISTA DE PRODUCTOS -->
+    <!-- ============================================ -->
+    <h2>Productos Existentes</h2>
+
+    <div id="productsContainer">
+      <p>Cargando productos...</p>
+    </div>
+
+    <hr />
+
+    <!-- ============================================ -->
+    <!-- SECCIÓN 3: REPORTES -->
+    <!-- ============================================ -->
+    <h2>Reportes</h2>
+
+    <h3>Total de Ventas de la Empresa</h3>
+    <button id="loadSalesBtn">Ver Total de Ventas</button>
+    <div id="salesInfo"></div>
+
+    <hr />
+
+    <h3>Gráfica de Ventas por Categoría</h3>
+    <button id="loadChartBtn">Ver Gráfica</button>
+    <div id="chartData"></div>
+
+    <hr />
+
+    <h3>Inventario por Categoría</h3>
+    <button id="loadInventoryBtn">Ver Inventario</button>
+    <div id="inventoryData"></div>
+
+    <script src="js/admin.js"></script>
+  </body>
+</html>
