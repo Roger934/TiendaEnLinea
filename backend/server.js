@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 3000;
 // CORS - Permitir peticiones del frontend
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5500",
+    origin: "*", // ← CAMBIO AQUÍ: Permitir cualquier origen
     credentials: true,
   })
 );
@@ -58,12 +58,11 @@ app.get("/api/db-test", async (req, res) => {
 });
 
 // ============================================
-// AQUÍ IRÁN LAS RUTAS (después)
+// RUTAS
 // ============================================
-// app.use('/api/auth', authRoutes);
-// app.use('/api/products', productRoutes);
-// app.use('/api/cart', cartRoutes);
-// etc...
+const authRoutes = require("./routes/authRoutes");
+
+app.use("/api/auth", authRoutes);
 
 // ============================================
 // MANEJO DE ERRORES 404
