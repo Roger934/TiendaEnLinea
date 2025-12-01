@@ -64,10 +64,14 @@ app.get("/api/db-test", async (req, res) => {
 const authRoutes = require("./routes/authRoutes");
 const productRoutes = require("./routes/productRoutes"); // Productos
 const adminRoutes = require("./routes/adminRoutes"); // CRUD
+const cartRoutes = require("./routes/cartRoutes"); // Carrito de compras
+const orderRoutes = require("./routes/orderRoutes"); // Crear orden
 
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes); // Productos
 app.use("/api/admin", adminRoutes); // CRUD
+app.use("/api/cart", cartRoutes); // Carrito de compras
+app.use("/api/orders", orderRoutes); // Crear orden
 
 // ============================================
 // MANEJO DE ERRORES 404
