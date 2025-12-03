@@ -3,14 +3,28 @@
 const express = require("express");
 const router = express.Router();
 const authController = require("../controllers/authController");
+const { verifyToken } = require("../middleware/auth");
 
-// Rutas públicas (sin autenticación)
+// Rutas públicas
 router.post("/register", authController.register);
 router.post("/login", authController.login);
+router.get("/captcha", authController.generateCaptcha);
+router.post("/forgot-password", authController.forgotPassword);
+router.post("/reset-password", authController.resetPassword);
 
-// Rutas protegidas (requieren JWT)
-const { verifyToken } = require("../middleware/auth");
-router.get("/verify", verifyToken, authController.verify);
-router.post("/logout", verifyToken, authController.logout);
+// Rutas protegidas
+router.get("/verify", verifyToken, (req, res) => {
+  res.json({
+    success: true,
+    user: req.user,
+  });
+});
+
+router.post("/logout", verifyToken, (req, res) => {
+  res.json({
+    success: true,
+    message: "Logout exitoso",
+  });
+});
 
 module.exports = router;
