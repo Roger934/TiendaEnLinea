@@ -67,6 +67,7 @@ const adminRoutes = require("./routes/adminRoutes"); // CRUD
 const cartRoutes = require("./routes/cartRoutes"); // Carrito de compras
 const orderRoutes = require("./routes/orderRoutes"); // Crear orden
 const subscriptionRoutes = require("./routes/subscriptionRoutes"); // Subs
+const contactRoutes = require("./routes/contactRoutes"); // Contacto
 
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes); // Productos
@@ -74,6 +75,7 @@ app.use("/api/admin", adminRoutes); // CRUD
 app.use("/api/cart", cartRoutes); // Carrito de compras
 app.use("/api/orders", orderRoutes); // Crear orden
 app.use("/api/subscription", subscriptionRoutes); // Subs
+app.use("/api/contact", contactRoutes); // Contacto
 
 // ============================================
 // MANEJO DE ERRORES 404
