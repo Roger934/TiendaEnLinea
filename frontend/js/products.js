@@ -63,6 +63,7 @@ const loadProducts = async (filters = {}) => {
 // ============================================
 const displayProducts = (productos) => {
   const container = document.getElementById("productosContainer");
+  const token = localStorage.getItem("token"); // ← Verificar login
 
   if (productos.length === 0) {
     container.innerHTML = "<p>No se encontraron productos</p>";
@@ -73,7 +74,7 @@ const displayProducts = (productos) => {
 
   productos.forEach((producto) => {
     const disponible = producto.stock > 0;
-    const precioFormateado = `$${parseFloat(producto.precio).toFixed(2)}`; // ← CAMBIO AQUÍ
+    const precioFormateado = `$${parseFloat(producto.precio).toFixed(2)}`;
 
     html += `
             <div style="border: 1px solid black; padding: 10px; margin: 10px 0;">
@@ -89,11 +90,13 @@ const displayProducts = (productos) => {
                 
                 ${
                   disponible
-                    ? `<button onclick="addToCart(${producto.id}, '${
-                        producto.nombre
-                      }', ${parseFloat(
-                        producto.precio
-                      )})">Agregar al carrito</button>` // ← CAMBIO AQUÍ TAMBIÉN
+                    ? token
+                      ? `<button onclick="addToCart(${producto.id}, '${
+                          producto.nombre
+                        }', ${parseFloat(
+                          producto.precio
+                        )})">Agregar al carrito</button>`
+                      : `<button onclick="promptLogin()">Agregar al carrito</button>`
                     : '<p style="color: red;">Producto no disponible</p>'
                 }
             </div>
@@ -102,20 +105,21 @@ const displayProducts = (productos) => {
 
   container.innerHTML = html;
 };
-
 // ============================================
 // AGREGAR AL CARRITO
 // ============================================
 const addToCart = async (id, nombre, precio) => {
   const token = localStorage.getItem("token");
 
-  if (token) {
-    // Usuario logueado - Agregar a BD
-    await addToCartDB(id);
-  } else {
-    // Usuario NO logueado - Agregar a localStorage
-    addToCartLocal(id, nombre, precio);
+  // Verificación de seguridad
+  if (!token) {
+    alert("⚠️ Debes iniciar sesión para agregar productos al carrito");
+    window.location.href = "login.html";
+    return;
   }
+
+  // Usuario logueado - Agregar a BD
+  await addToCartDB(id);
 };
 
 // ============================================
@@ -152,29 +156,29 @@ const addToCartDB = async (producto_id) => {
 };
 
 // ============================================
-// AGREGAR A LOCALSTORAGE (sin login)
+// AGREGAR A LOCALSTORAGE (sin login)   <-------------
 // ============================================
-const addToCartLocal = (id, nombre, precio) => {
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+// const addToCartLocal = (id, nombre, precio) => {
+//   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-  // Verificar si el producto ya existe
-  const existingProduct = cart.find((item) => item.id === id);
+//   // Verificar si el producto ya existe
+//   const existingProduct = cart.find((item) => item.id === id);
 
-  if (existingProduct) {
-    existingProduct.cantidad++;
-  } else {
-    cart.push({
-      id: id,
-      nombre: nombre,
-      precio: precio,
-      cantidad: 1,
-    });
-  }
+//   if (existingProduct) {
+//     existingProduct.cantidad++;
+//   } else {
+//     cart.push({
+//       id: id,
+//       nombre: nombre,
+//       precio: precio,
+//       cantidad: 1,
+//     });
+//   }
 
-  localStorage.setItem("cart", JSON.stringify(cart));
-  alert("Producto agregado al carrito");
-  updateCartCount();
-};
+//   localStorage.setItem("cart", JSON.stringify(cart));
+//   alert("Producto agregado al carrito");
+//   updateCartCount();
+// };
 
 // ============================================
 // ACTUALIZAR CONTADOR DEL CARRITO
@@ -202,13 +206,8 @@ const updateCartCount = async () => {
     } catch (error) {
       console.error("Error al obtener carrito:", error);
     }
-  } else {
-    // Usuario NO logueado - Contar desde localStorage
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    cart.forEach((item) => {
-      totalItems += item.cantidad;
-    });
   }
+  // Si NO hay token, totalItems se queda en 0
 
   const cartCountEl = document.getElementById("cartCount");
   if (cartCountEl) {
@@ -237,6 +236,14 @@ document.getElementById("limpiarBtn").addEventListener("click", () => {
   document.getElementById("enOferta").checked = false;
   loadProducts();
 });
+
+// ============================================
+// PEDIR LOGIN SI INTENTA AGREGAR SIN ESTAR LOGUEADO
+// ============================================
+const promptLogin = () => {
+  alert("⚠️ Debes iniciar sesión para agregar productos al carrito");
+  window.location.href = "login.html";
+};
 
 // ============================================
 // VER CARRITO
