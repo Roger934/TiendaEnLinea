@@ -4,6 +4,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Finalizar Compra - TechStore</title>
+    <style>
+      .box {
+        border: 1px solid #ccc;
+        padding: 12px;
+        margin-top: 10px;
+        width: 350px;
+        background: #fafafa;
+        border-radius: 5px;
+      }
+      .small-input {
+        width: 140px;
+      }
+    </style>
   </head>
   <body>
     <h1>Finalizar Compra - TechStore</h1>
@@ -91,7 +104,8 @@
         <input type="radio" name="metodoPago" value="oxxo" />
         Pago en Oxxo </label
       ><br /><br />
-
+      <!-- 🔥 NUEVA SECCIÓN -->
+      <div id="paymentFields" class="box"></div>
       <hr />
 
       <h3>Cupón de Descuento (opcional)</h3>

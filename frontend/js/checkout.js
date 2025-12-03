@@ -230,6 +230,31 @@ document
     ).value;
     const codigoCupon = document.getElementById("codigoCupon").value;
 
+    // ======================== PAGOS SIMULADOS ============================
+    let datosPago = {};
+
+    if (metodoPago === "tarjeta") {
+      datosPago = {
+        numeroTarjeta: document.getElementById("numeroTarjeta").value,
+        expiracion: document.getElementById("expiracion").value,
+        cvv: document.getElementById("cvv").value,
+      };
+    }
+
+    if (metodoPago === "transferencia") {
+      datosPago = {
+        referenciaTransferencia: "pendiente",
+      };
+    }
+
+    if (metodoPago === "oxxo") {
+      datosPago = {
+        referenciaOxxo: paymentFields.innerText,
+      };
+    }
+
+    // ================== PAIS ======================
+
     if (!pais) {
       alert("⚠️ Debes seleccionar un país");
       return;
@@ -255,6 +280,7 @@ document
           telefono,
           metodoPago,
           codigoCupon: codigoCupon || undefined,
+          datosPago,
         }),
       });
 
@@ -281,3 +307,58 @@ document
       messageEl.style.color = "red";
     }
   });
+
+// ============================================
+// MOSTRAR CAMPOS SEGÚN MÉTODO DE PAGO
+// ============================================
+
+const paymentFields = document.getElementById("paymentFields");
+
+const renderPaymentFields = (metodo) => {
+  if (metodo === "tarjeta") {
+    paymentFields.innerHTML = `
+      <h4>Pago con Tarjeta</h4>
+      <label>Número de tarjeta</label><br>
+      <input type="text" id="numeroTarjeta" placeholder="XXXX-XXXX-XXXX-XXXX" required><br><br>
+
+      <label>Fecha de expiración</label><br>
+      <input type="text" id="expiracion" placeholder="MM/AA" class="small-input" required><br><br>
+
+      <label>CVV</label><br>
+      <input type="text" id="cvv" placeholder="123" class="small-input" required><br>
+    `;
+  }
+
+  if (metodo === "transferencia") {
+    paymentFields.innerHTML = `
+      <h4>Transferencia Bancaria</h4>
+      <p><strong>Banco:</strong> BBVA</p>
+      <p><strong>Cuenta:</strong> 0123456789</p>
+      <p><strong>CLABE:</strong> 123456789012345678</p>
+      <p>Una vez hecha la transferencia, tu orden se procesará automáticamente.</p>
+    `;
+  }
+
+  if (metodo === "oxxo") {
+    const referencia = Math.floor(Math.random() * 900000000000) + 100000000000;
+
+    paymentFields.innerHTML = `
+      <h4>Pago en OXXO</h4>
+      <p>Lleva esta referencia a cualquier tienda OXXO:</p>
+      <p style="font-size:20px; font-weight:bold;">
+        ${referencia}
+      </p>
+      <p>Tu orden se confirmará cuando realices el pago.</p>
+    `;
+  }
+};
+
+// Detectar cambio de método de pago
+document.querySelectorAll('input[name="metodoPago"]').forEach((radio) => {
+  radio.addEventListener("change", (e) => {
+    renderPaymentFields(e.target.value);
+  });
+});
+
+// Inicialización por defecto (tarjeta)
+renderPaymentFields("tarjeta");
