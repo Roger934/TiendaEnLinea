@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contacto - TechStore</title>
+  </head>
+  <body>
+    <h1>Contacto - TechStore</h1>
+
+    <p><a href="index.html">← Volver a la tienda</a></p>
+
+    <hr />
+
+    <h2>¿Tienes alguna pregunta?</h2>
+    <p>Envíanos un mensaje y te responderemos lo antes posible.</p>
+
+    <form id="contactForm">
+      <label>Nombre:</label><br />
+      <input
+        type="text"
+        id="nombre"
+        required
+        style="width: 400px; padding: 8px"
+      /><br /><br />
+
+      <label>Email:</label><br />
+      <input
+        type="email"
+        id="email"
+        required
+        style="width: 400px; padding: 8px"
+      /><br /><br />
+
+      <label>Mensaje:</label><br />
+      <textarea
+        id="mensaje"
+        required
+        style="width: 400px; height: 150px; padding: 8px"
+      ></textarea
+      ><br /><br />
+
+      <button type="submit" style="padding: 10px 20px">Enviar Mensaje</button>
+    </form>
+
+    <p id="message"></p>
+
+    <script src="js/contact.js"></script>
+  </body>
+</html>

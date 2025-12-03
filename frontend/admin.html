@@ -100,6 +100,16 @@
 
     <h3>Gráfica de Ventas por Categoría</h3>
     <button id="loadChartBtn">Ver Gráfica</button>
+
+    <!-- Canvas para la gráfica -->
+    <canvas
+      id="salesChart"
+      width="600"
+      height="300"
+      style="max-width: 100%; margin-top: 20px; display: none"
+    ></canvas>
+
+    <!-- Tabla de datos -->
     <div id="chartData"></div>
 
     <hr />
@@ -109,5 +119,7 @@
     <div id="inventoryData"></div>
 
     <script src="js/admin.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </body>
 </html>

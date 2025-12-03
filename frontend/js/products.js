@@ -63,6 +63,7 @@ const loadProducts = async (filters = {}) => {
 // ============================================
 const displayProducts = (productos) => {
   const container = document.getElementById("productosContainer");
+  const token = localStorage.getItem("token"); // ← Verificar login
 
   if (productos.length === 0) {
     container.innerHTML = "<p>No se encontraron productos</p>";
@@ -73,7 +74,7 @@ const displayProducts = (productos) => {
 
   productos.forEach((producto) => {
     const disponible = producto.stock > 0;
-    const precioFormateado = `$${parseFloat(producto.precio).toFixed(2)}`; // ← CAMBIO AQUÍ
+    const precioFormateado = `$${parseFloat(producto.precio).toFixed(2)}`;
 
     html += `
             <div style="border: 1px solid black; padding: 10px; margin: 10px 0;">
@@ -89,11 +90,13 @@ const displayProducts = (productos) => {
                 
                 ${
                   disponible
-                    ? `<button onclick="addToCart(${producto.id}, '${
-                        producto.nombre
-                      }', ${parseFloat(
-                        producto.precio
-                      )})">Agregar al carrito</button>` // ← CAMBIO AQUÍ TAMBIÉN
+                    ? token
+                      ? `<button onclick="addToCart(${producto.id}, '${
+                          producto.nombre
+                        }', ${parseFloat(
+                          producto.precio
+                        )})">Agregar al carrito</button>`
+                      : `<button onclick="promptLogin()">Agregar al carrito</button>`
                     : '<p style="color: red;">Producto no disponible</p>'
                 }
             </div>
@@ -102,42 +105,114 @@ const displayProducts = (productos) => {
 
   container.innerHTML = html;
 };
-
 // ============================================
-// AGREGAR AL CARRITO (localStorage)
+// AGREGAR AL CARRITO
 // ============================================
-const addToCart = (id, nombre, precio) => {
-  // Obtener carrito actual del localStorage
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+const addToCart = async (id, nombre, precio) => {
+  const token = localStorage.getItem("token");
 
-  // Verificar si el producto ya está en el carrito
-  const existingItem = cart.find((item) => item.id === id);
-
-  if (existingItem) {
-    existingItem.cantidad++;
-  } else {
-    cart.push({
-      id: id,
-      nombre: nombre,
-      precio: precio,
-      cantidad: 1,
-    });
+  // Verificación de seguridad
+  if (!token) {
+    alert("⚠️ Debes iniciar sesión para agregar productos al carrito");
+    window.location.href = "login.html";
+    return;
   }
 
-  // Guardar en localStorage
-  localStorage.setItem("cart", JSON.stringify(cart));
-
-  alert(`✅ ${nombre} agregado al carrito`);
-  updateCartCount();
+  // Usuario logueado - Agregar a BD
+  await addToCartDB(id);
 };
+
+// ============================================
+// AGREGAR A BD (usuario logueado)
+// ============================================
+const addToCartDB = async (producto_id) => {
+  const token = localStorage.getItem("token");
+
+  try {
+    const response = await fetch(`${API_URL}/cart`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        producto_id: producto_id,
+        cantidad: 1,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      alert("✅ " + data.message);
+      updateCartCount(); // Actualizar contador
+    } else {
+      alert("❌ " + data.message);
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("❌ Error al agregar al carrito");
+  }
+};
+
+// ============================================
+// AGREGAR A LOCALSTORAGE (sin login)   <-------------
+// ============================================
+// const addToCartLocal = (id, nombre, precio) => {
+//   let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+//   // Verificar si el producto ya existe
+//   const existingProduct = cart.find((item) => item.id === id);
+
+//   if (existingProduct) {
+//     existingProduct.cantidad++;
+//   } else {
+//     cart.push({
+//       id: id,
+//       nombre: nombre,
+//       precio: precio,
+//       cantidad: 1,
+//     });
+//   }
+
+//   localStorage.setItem("cart", JSON.stringify(cart));
+//   alert("Producto agregado al carrito");
+//   updateCartCount();
+// };
 
 // ============================================
 // ACTUALIZAR CONTADOR DEL CARRITO
 // ============================================
-const updateCartCount = () => {
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];
-  const totalItems = cart.reduce((sum, item) => sum + item.cantidad, 0);
-  document.getElementById("cartCount").textContent = totalItems;
+const updateCartCount = async () => {
+  const token = localStorage.getItem("token");
+  let totalItems = 0;
+
+  if (token) {
+    // Usuario logueado - Contar desde BD
+    try {
+      const response = await fetch(`${API_URL}/cart`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        data.items.forEach((item) => {
+          totalItems += item.cantidad;
+        });
+      }
+    } catch (error) {
+      console.error("Error al obtener carrito:", error);
+    }
+  }
+  // Si NO hay token, totalItems se queda en 0
+
+  const cartCountEl = document.getElementById("cartCount");
+  if (cartCountEl) {
+    cartCountEl.textContent = totalItems;
+  }
 };
 
 // ============================================
@@ -161,6 +236,14 @@ document.getElementById("limpiarBtn").addEventListener("click", () => {
   document.getElementById("enOferta").checked = false;
   loadProducts();
 });
+
+// ============================================
+// PEDIR LOGIN SI INTENTA AGREGAR SIN ESTAR LOGUEADO
+// ============================================
+const promptLogin = () => {
+  alert("⚠️ Debes iniciar sesión para agregar productos al carrito");
+  window.location.href = "login.html";
+};
 
 // ============================================
 // VER CARRITO
