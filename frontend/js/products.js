@@ -104,17 +104,64 @@ const displayProducts = (productos) => {
 };
 
 // ============================================
-// AGREGAR AL CARRITO (localStorage)
+// AGREGAR AL CARRITO
 // ============================================
-const addToCart = (id, nombre, precio) => {
-  // Obtener carrito actual del localStorage
+const addToCart = async (id, nombre, precio) => {
+  const token = localStorage.getItem("token");
+
+  if (token) {
+    // Usuario logueado - Agregar a BD
+    await addToCartDB(id);
+  } else {
+    // Usuario NO logueado - Agregar a localStorage
+    addToCartLocal(id, nombre, precio);
+  }
+};
+
+// ============================================
+// AGREGAR A BD (usuario logueado)
+// ============================================
+const addToCartDB = async (producto_id) => {
+  const token = localStorage.getItem("token");
+
+  try {
+    const response = await fetch(`${API_URL}/cart`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        producto_id: producto_id,
+        cantidad: 1,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      alert("✅ " + data.message);
+      updateCartCount(); // Actualizar contador
+    } else {
+      alert("❌ " + data.message);
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("❌ Error al agregar al carrito");
+  }
+};
+
+// ============================================
+// AGREGAR A LOCALSTORAGE (sin login)
+// ============================================
+const addToCartLocal = (id, nombre, precio) => {
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-  // Verificar si el producto ya está en el carrito
-  const existingItem = cart.find((item) => item.id === id);
+  // Verificar si el producto ya existe
+  const existingProduct = cart.find((item) => item.id === id);
 
-  if (existingItem) {
-    existingItem.cantidad++;
+  if (existingProduct) {
+    existingProduct.cantidad++;
   } else {
     cart.push({
       id: id,
@@ -124,20 +171,49 @@ const addToCart = (id, nombre, precio) => {
     });
   }
 
-  // Guardar en localStorage
   localStorage.setItem("cart", JSON.stringify(cart));
-
-  alert(`✅ ${nombre} agregado al carrito`);
+  alert("Producto agregado al carrito");
   updateCartCount();
 };
 
 // ============================================
 // ACTUALIZAR CONTADOR DEL CARRITO
 // ============================================
-const updateCartCount = () => {
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];
-  const totalItems = cart.reduce((sum, item) => sum + item.cantidad, 0);
-  document.getElementById("cartCount").textContent = totalItems;
+const updateCartCount = async () => {
+  const token = localStorage.getItem("token");
+  let totalItems = 0;
+
+  if (token) {
+    // Usuario logueado - Contar desde BD
+    try {
+      const response = await fetch(`${API_URL}/cart`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        data.items.forEach((item) => {
+          totalItems += item.cantidad;
+        });
+      }
+    } catch (error) {
+      console.error("Error al obtener carrito:", error);
+    }
+  } else {
+    // Usuario NO logueado - Contar desde localStorage
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cart.forEach((item) => {
+      totalItems += item.cantidad;
+    });
+  }
+
+  const cartCountEl = document.getElementById("cartCount");
+  if (cartCountEl) {
+    cartCountEl.textContent = totalItems;
+  }
 };
 
 // ============================================

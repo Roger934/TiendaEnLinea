@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Finalizar Compra</title>
+  </head>
+  <body>
+    <h1>Finalizar Compra</h1>
+
+    <p><a href="cart.html">← Volver al carrito</a></p>
+
+    <hr />
+
+    <!-- RESUMEN DEL CARRITO -->
+    <h2>Resumen de tu pedido</h2>
+    <div id="cartSummary">
+      <p>Cargando...</p>
+    </div>
+
+    <hr />
+
+    <!-- FORMULARIO DE CHECKOUT -->
+    <h2>Datos de Envío</h2>
+
+    <form id="checkoutForm">
+      <label>Dirección:</label><br />
+      <input
+        type="text"
+        id="direccion"
+        required
+        style="width: 400px"
+      /><br /><br />
+
+      <label>Ciudad:</label><br />
+      <input type="text" id="ciudad" required /><br /><br />
+
+      <label>Código Postal:</label><br />
+      <input type="text" id="codigoPostal" required /><br /><br />
+
+      <label>País:</label><br />
+      <select id="pais" required>
+        <option value="Mexico">México</option>
+        <option value="USA">Estados Unidos</option>
+        <option value="España">España</option>
+        <option value="Otro">Otro</option></select
+      ><br /><br />
+
+      <label>Teléfono:</label><br />
+      <input type="tel" id="telefono" required /><br /><br />
+
+      <hr />
+
+      <h3>Método de Pago</h3>
+
+      <label>
+        <input type="radio" name="metodoPago" value="tarjeta" checked />
+        Tarjeta de Crédito/Débito </label
+      ><br />
+
+      <label>
+        <input type="radio" name="metodoPago" value="transferencia" />
+        Transferencia Bancaria </label
+      ><br />
+
+      <label>
+        <input type="radio" name="metodoPago" value="oxxo" />
+        Pago en Oxxo </label
+      ><br /><br />
+
+      <hr />
+
+      <h3>Cupón de Descuento (opcional)</h3>
+      <input
+        type="text"
+        id="codigoCupon"
+        placeholder="Ingresa tu cupón"
+      /><br /><br />
+
+      <hr />
+
+      <h2>Total a Pagar: $<span id="totalAmount">0.00</span></h2>
+
+      <button type="submit">Finalizar Compra</button>
+    </form>
+
+    <p id="message"></p>
+
+    <script src="js/checkout.js"></script>
+  </body>
+</html>
