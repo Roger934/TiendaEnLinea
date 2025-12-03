@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login</title>
+    <title>Login - TechStore</title>
   </head>
   <body>
-    <h1>Iniciar Sesión</h1>
+    <h1>Iniciar Sesión - TechStore</h1>
 
     <form id="loginForm">
       <label>Email:</label><br />
@@ -15,12 +15,28 @@
       <label>Contraseña:</label><br />
       <input type="password" id="password" required /><br /><br />
 
+      <!-- CAPTCHA -->
+      <label>Captcha:</label><br />
+      <div id="captchaContainer" style="margin: 10px 0"></div>
+      <button type="button" id="refreshCaptcha">🔄 Generar nuevo captcha</button
+      ><br /><br />
+
+      <input
+        type="text"
+        id="captchaInput"
+        placeholder="Ingresa el texto del captcha"
+        required
+        style="width: 250px"
+      /><br /><br />
+      <input type="hidden" id="captchaToken" />
+
       <button type="submit">Iniciar Sesión</button>
     </form>
 
     <p id="message"></p>
+    <p><a href="forgot-password.html">¿Olvidaste tu contraseña?</a></p>
 
-    <p>¿No tienes cuenta? <a href="register.html">Regístrate</a></p>
+    <p>¿No tienes cuenta? <a href="register.html">Regístrate aquí</a></p>
 
     <script src="js/login.js"></script>
   </body>

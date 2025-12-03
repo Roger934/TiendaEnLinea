@@ -68,7 +68,14 @@ const cartRoutes = require("./routes/cartRoutes"); // Carrito de compras
 const orderRoutes = require("./routes/orderRoutes"); // Crear orden
 const subscriptionRoutes = require("./routes/subscriptionRoutes"); // Subs
 const contactRoutes = require("./routes/contactRoutes"); // Contacto
+const { swaggerUi, swaggerDocs } = require("./config/swagger"); // SWAGGER DOCUMENTATION
 
+// ============================================
+// SWAGGER DOCUMENTATION
+// ============================================
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+// Demás rutas
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes); // Productos
 app.use("/api/admin", adminRoutes); // CRUD
