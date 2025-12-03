@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Finalizar Compra</title>
+    <title>Finalizar Compra - TechStore</title>
   </head>
   <body>
-    <h1>Finalizar Compra</h1>
+    <h1>Finalizar Compra - TechStore</h1>
 
     <p><a href="cart.html">← Volver al carrito</a></p>
 
@@ -30,24 +30,48 @@
         id="direccion"
         required
         style="width: 400px"
+        placeholder="Calle y número"
       /><br /><br />
 
       <label>Ciudad:</label><br />
-      <input type="text" id="ciudad" required /><br /><br />
+      <input
+        type="text"
+        id="ciudad"
+        required
+        placeholder="Ciudad"
+      /><br /><br />
 
       <label>Código Postal:</label><br />
-      <input type="text" id="codigoPostal" required /><br /><br />
+      <input
+        type="text"
+        id="codigoPostal"
+        required
+        placeholder="CP"
+      /><br /><br />
 
-      <label>País:</label><br />
+      <label
+        ><strong>País:</strong> (Los impuestos y envío dependen del país
+        seleccionado)</label
+      ><br />
       <select id="pais" required>
+        <option value="">-- Selecciona tu país --</option>
         <option value="Mexico">México</option>
         <option value="USA">Estados Unidos</option>
         <option value="España">España</option>
-        <option value="Otro">Otro</option></select
+        <option value="Canada">Canadá</option>
+        <option value="Argentina">Argentina</option>
+        <option value="Colombia">Colombia</option>
+        <option value="Chile">Chile</option>
+        <option value="Peru">Perú</option></select
       ><br /><br />
 
       <label>Teléfono:</label><br />
-      <input type="tel" id="telefono" required /><br /><br />
+      <input
+        type="tel"
+        id="telefono"
+        required
+        placeholder="Teléfono de contacto"
+      /><br /><br />
 
       <hr />
 
@@ -74,12 +98,18 @@
       <input
         type="text"
         id="codigoCupon"
-        placeholder="Ingresa tu cupón"
+        placeholder="Ingresa tu cupón (ej: BIENVENIDO10)"
       /><br /><br />
 
       <hr />
 
-      <h2>Total a Pagar: $<span id="totalAmount">0.00</span></h2>
+      <!-- PREVIEW DE COSTOS -->
+      <h2>Desglose de Costos</h2>
+      <div id="costPreview">
+        <p><em>Selecciona un país para ver el desglose de costos</em></p>
+      </div>
+
+      <hr />
 
       <button type="submit">Finalizar Compra</button>
     </form>

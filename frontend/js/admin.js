@@ -270,7 +270,7 @@ document.getElementById("loadSalesBtn").addEventListener("click", async () => {
 });
 
 // ============================================
-// VER GRÁFICA DE VENTAS (datos en texto)
+// VER GRÁFICA DE VENTAS (con Chart.js)
 // ============================================
 document.getElementById("loadChartBtn").addEventListener("click", async () => {
   try {
@@ -283,7 +283,75 @@ document.getElementById("loadChartBtn").addEventListener("click", async () => {
     const data = await response.json();
 
     if (data.success) {
-      let html = '<table border="1" style="border-collapse: collapse;">';
+      // Extraer datos de la API
+      const categorias = data.data.map((item) => item.categoria);
+      const ventas = data.data.map((item) => parseFloat(item.total_ventas));
+
+      // Mostrar el canvas
+      document.getElementById("salesChart").style.display = "block";
+
+      // Destruir gráfica anterior si existe
+      if (window.myChart) {
+        window.myChart.destroy();
+      }
+
+      // Crear nueva gráfica
+      const ctx = document.getElementById("salesChart").getContext("2d");
+      window.myChart = new Chart(ctx, {
+        type: "bar", // Puedes cambiar a 'pie' si prefieres pastel
+        data: {
+          labels: categorias,
+          datasets: [
+            {
+              label: "Total de Ventas ($)",
+              data: ventas,
+              backgroundColor: [
+                "#FF6384",
+                "#36A2EB",
+                "#FFCE56",
+                "#4BC0C0",
+                "#9966FF",
+              ],
+              borderColor: [
+                "#FF6384",
+                "#36A2EB",
+                "#FFCE56",
+                "#4BC0C0",
+                "#9966FF",
+              ],
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: true,
+              position: "top",
+            },
+            title: {
+              display: true,
+              text: "Ventas por Categoría",
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function (value) {
+                  return "$" + value.toFixed(2);
+                },
+              },
+            },
+          },
+        },
+      });
+
+      // Mostrar también la tabla (opcional)
+      let html = "<h4>Datos detallados:</h4>";
+      html +=
+        '<table border="1" style="border-collapse: collapse; margin-top: 20px;">';
       html +=
         "<tr><th>Categoría</th><th>Total Vendidos</th><th>Total Ventas</th></tr>";
 
