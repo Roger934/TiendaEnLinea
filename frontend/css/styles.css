@@ -189,7 +189,13 @@ header {
 }
 
 .user-name::before {
-  content: "👤";
+  content: "";
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%2300d4ff" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5zm0 2c-3.86 0-7 3.141-7 7h2c0-2.757 2.243-5 5-5s5 2.243 5 5h2c0-3.859-3.14-7-7-7z"/></svg>');
+  background-size: cover;
+  filter: drop-shadow(0 0 5px var(--accent-blue));
 }
 
 /* Controles de accesibilidad */
@@ -1158,6 +1164,79 @@ footer {
 
 .cost-line.total span:last-child {
   color: var(--accent-blue);
+}
+
+/* ============================================
+   BOTÓN ADMIN NARANJA
+   ============================================ */
+.btn-admin {
+  background: linear-gradient(135deg, #ff8c00, #ff5c00); /* naranja intenso */
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px rgba(255, 110, 0, 0.4);
+  border: none;
+}
+
+.btn-admin:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 25px rgba(255, 110, 0, 0.7);
+  background: linear-gradient(135deg, #ffa733, #ff6600);
+}
+
+.footer-social {
+  margin: 2rem 0;
+}
+
+.social-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  text-decoration: none;
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  color: var(--accent-pink);
+  transition: all 0.3s ease;
+}
+
+.social-btn svg {
+  filter: drop-shadow(0 0 6px currentColor);
+  transition: transform 0.3s ease;
+}
+
+/* Hover neon */
+.social-btn:hover {
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  border-color: var(--accent-blue);
+  color: white;
+  box-shadow: 0 0 20px var(--shadow);
+  transform: translateY(-2px) scale(1.08);
+}
+
+.social-btn:hover svg {
+  transform: scale(1.15);
+}
+
+.cart-item-remove {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: 0.2s;
+}
+
+.cart-item-remove:hover {
+  color: #ff006e;
+  transform: scale(1.15);
 }
 
 /* Responsive */

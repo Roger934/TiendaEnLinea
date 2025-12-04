@@ -7,13 +7,32 @@ const token = localStorage.getItem("token");
 // INICIO
 // ============================================
 window.addEventListener("DOMContentLoaded", () => {
-  // Actualizar header
+  const token = localStorage.getItem("token");
   const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+  // =============================
+  // Actualizar header
+  // =============================
+  // Actualizar header
   if (token && user.nombre) {
-    document.getElementById("userName").textContent = user.nombre;
-    document.getElementById("userName").style.display = "flex";
-    document.getElementById("loginLink").style.display = "none";
-    document.getElementById("logoutBtn").style.display = "block";
+    // Mostrar nombre y logout
+    const userNameEl = document.getElementById("userName");
+    const loginLink = document.getElementById("loginLink");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const adminLink = document.getElementById("adminLink");
+
+    if (userNameEl) {
+      userNameEl.textContent = user.nombre;
+      userNameEl.style.display = "flex";
+    }
+
+    if (loginLink) loginLink.style.display = "none";
+    if (logoutBtn) logoutBtn.style.display = "block";
+
+    // Mostrar Admin si es admin
+    if (adminLink && user.rol === "admin") {
+      adminLink.style.display = "inline-block";
+    }
   }
 
   // Mostrar Admin link si es admin
@@ -22,15 +41,33 @@ window.addEventListener("DOMContentLoaded", () => {
     adminLink.style.display = "inline-block";
   }
 
-  // Cargar carrito
+  // =============================
+  // Carrito
+  // =============================
   if (token) {
     loadCartFromDB();
   } else {
+    // Mostrar un alert bonito
+    Swal.fire({
+      icon: "info",
+      title: "Inicia sesión",
+      text: "Debes iniciar sesión para ver tu carrito",
+      background: "#1a2038",
+      color: "#e0e7ff",
+      confirmButtonColor: "#00d4ff",
+    }).then(() => {
+      window.location.href = "login.html";
+    });
+
+    // También mostrar mensaje visual dentro del contenedor del carrito (opcional)
     document.getElementById("cartContainer").innerHTML = `
-      <div class="empty-cart">
-        <p>⚠️ Debes <a href="login.html">iniciar sesión</a> para ver tu carrito</p>
+      <div class="empty-cart fancy-message">
+        <p><strong>Tu carrito está vacío</strong></p>
+        <p>Inicia sesión para ver tus productos guardados</p>
+        <a href="login.html" class="btn-primary" style="margin-top: 1rem;">Iniciar Sesión</a>
       </div>
     `;
+
     document.getElementById("checkoutBtn").style.display = "none";
   }
 });
@@ -151,8 +188,17 @@ const displayCartFromDB = (items, subtotal) => {
         <button onclick="removeFromCartDB(${
           item.id
         })" class="cart-item-remove" title="Eliminar">
-          🗑️
-        </button>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+       stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="3 6 5 6 21 6"/>
+    <path d="M19 6l-1 14H6L5 6"/>
+    <path d="M10 11v6"/>
+    <path d="M14 11v6"/>
+    <path d="M9 6V4h6v2"/>
+  </svg>
+</button>
+
+
       </div>
     `;
   });

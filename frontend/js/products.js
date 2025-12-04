@@ -106,6 +106,12 @@ const displayProducts = (productos) => {
     return;
   }
 
+  const svgOferta = `
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2s4 4 4 8a4 4 0 1 1-8 0c0-1.5.5-3 2-5-4 2-6 6-6 9a8 8 0 1 0 16 0c0-5-3-9-8-12z"/>
+    </svg>
+  `;
+
   let html = "";
 
   productos.forEach((producto) => {
@@ -114,43 +120,47 @@ const displayProducts = (productos) => {
 
     html += `
       <div class="product-card">
+
         ${
           producto.en_oferta
-            ? '<span class="product-badge">🔥 OFERTA</span>'
+            ? `<span class="product-badge">${svgOferta} OFERTA</span>`
             : ""
         }
-        
+
         <img src="${producto.imagen_url}" alt="${
       producto.nombre
     }" class="product-image">
-        
+
         <p class="product-category">${producto.categoria_nombre}</p>
         <h3 class="product-title">${producto.nombre}</h3>
         <p class="product-description">${producto.descripcion}</p>
         <p class="product-price">${precioFormateado}</p>
+
         <p class="product-stock ${!disponible ? "out-of-stock" : ""}">
-          ${
-            disponible ? `✅ ${producto.stock} disponibles` : "❌ No disponible"
-          }
+          ${disponible ? `${producto.stock} disponibles` : "No disponible"}
         </p>
-        
+
         ${
           disponible
             ? token
               ? `<button class="btn-primary" onclick="addToCart(${
                   producto.id
-                }, '${producto.nombre}', ${parseFloat(
-                  producto.precio
-                )})">Agregar al carrito 🛒</button>`
-              : `<button class="btn-primary" onclick="promptLogin()">Agregar al carrito 🛒</button>`
+                }, '${producto.nombre}', ${parseFloat(producto.precio)})">
+                    Agregar al carrito
+                 </button>`
+              : `<button class="btn-primary" onclick="promptLogin()">
+                    Agregar al carrito
+                 </button>`
             : '<button class="btn-secondary" disabled>No disponible</button>'
         }
+
       </div>
     `;
   });
 
   container.innerHTML = html;
 };
+
 // ============================================
 // AGREGAR AL CARRITO
 // ============================================
