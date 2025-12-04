@@ -9,18 +9,20 @@ let editingProductId = null;
 // ============================================
 window.addEventListener("DOMContentLoaded", () => {
   token = localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-  // Verificar que esté logueado y sea admin
   if (!token || !user || user.rol !== "admin") {
-    alert("⚠️ Acceso denegado. Solo administradores.");
-    window.location.href = "login.html";
+    alertError(
+      "Solo administradores pueden acceder a esta página",
+      "Acceso Denegado"
+    );
+    setTimeout(() => {
+      window.location.href = "login.html";
+    }, 2000);
     return;
   }
 
-  document.getElementById("adminInfo").textContent = `Admin: ${user.nombre}`;
-
-  // Cargar productos
+  document.getElementById("adminInfo").textContent = user.nombre;
   loadProducts();
 });
 
@@ -51,7 +53,7 @@ const loadProducts = async () => {
 };
 
 // ============================================
-// MOSTRAR PRODUCTOS CON BOTONES DE EDITAR/ELIMINAR
+// MOSTRAR PRODUCTOS
 // ============================================
 const displayProducts = (productos) => {
   const container = document.getElementById("productsContainer");
@@ -61,38 +63,44 @@ const displayProducts = (productos) => {
     return;
   }
 
-  let html =
-    '<table border="1" style="width: 100%; border-collapse: collapse;">';
+  let html = '<table style="width: 100%; border-collapse: collapse;">';
   html += `
-        <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Precio</th>
-            <th>Stock</th>
-            <th>Categoría</th>
-            <th>Oferta</th>
-            <th>Acciones</th>
-        </tr>
-    `;
+    <thead>
+      <tr style="background: var(--bg-secondary); color: var(--accent-blue);">
+        <th style="padding: 1rem; text-align: left;">ID</th>
+        <th style="padding: 1rem; text-align: left;">Nombre</th>
+        <th style="padding: 1rem; text-align: left;">Precio</th>
+        <th style="padding: 1rem; text-align: left;">Stock</th>
+        <th style="padding: 1rem; text-align: left;">Categoría</th>
+        <th style="padding: 1rem; text-align: left;">Oferta</th>
+        <th style="padding: 1rem; text-align: left;">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+  `;
 
   productos.forEach((p) => {
     html += `
-            <tr>
-                <td>${p.id}</td>
-                <td>${p.nombre}</td>
-                <td>$${parseFloat(p.precio).toFixed(2)}</td>
-                <td>${p.stock}</td>
-                <td>${p.categoria_nombre}</td>
-                <td>${p.en_oferta ? "🔥 Sí" : "No"}</td>
-                <td>
-                    <button onclick="editProduct(${p.id})">Editar</button>
-                    <button onclick="deleteProduct(${p.id})">Eliminar</button>
-                </td>
-            </tr>
-        `;
+      <tr style="border-bottom: 1px solid var(--border);">
+        <td style="padding: 1rem;">${p.id}</td>
+        <td style="padding: 1rem;">${p.nombre}</td>
+        <td style="padding: 1rem;">$${parseFloat(p.precio).toFixed(2)}</td>
+        <td style="padding: 1rem;">${p.stock}</td>
+        <td style="padding: 1rem;">${p.categoria_nombre}</td>
+        <td style="padding: 1rem;">${p.en_oferta ? "🔥 Sí" : "No"}</td>
+        <td style="padding: 1rem;">
+          <button onclick="editProduct(${
+            p.id
+          })" class="btn-secondary" style="margin: 0 0.25rem;">Editar</button>
+          <button onclick="deleteProduct(${
+            p.id
+          })" class="btn-primary" style="margin: 0 0.25rem; background: var(--accent-pink);">Eliminar</button>
+        </td>
+      </tr>
+    `;
   });
 
-  html += "</table>";
+  html += "</tbody></table>";
   container.innerHTML = html;
 };
 
@@ -113,13 +121,10 @@ document.getElementById("productForm").addEventListener("submit", async (e) => {
     en_oferta: document.getElementById("en_oferta").checked,
   };
 
-  const messageEl = document.getElementById("formMessage");
-
   try {
     let response;
 
     if (editingProductId) {
-      // ACTUALIZAR producto existente
       response = await fetch(`${API_URL}/admin/products/${editingProductId}`, {
         method: "PUT",
         headers: {
@@ -129,7 +134,6 @@ document.getElementById("productForm").addEventListener("submit", async (e) => {
         body: JSON.stringify(productData),
       });
     } else {
-      // CREAR nuevo producto
       response = await fetch(`${API_URL}/admin/products`, {
         method: "POST",
         headers: {
@@ -143,32 +147,25 @@ document.getElementById("productForm").addEventListener("submit", async (e) => {
     const data = await response.json();
 
     if (data.success) {
-      messageEl.textContent = "✅ " + data.message;
-      messageEl.style.color = "green";
+      alertSuccess(
+        data.message,
+        editingProductId ? "¡Actualizado!" : "¡Creado!"
+      );
 
-      // Limpiar formulario
       document.getElementById("productForm").reset();
+      document.getElementById("imagePreview").innerHTML = "";
+      document.getElementById("uploadMessage").textContent = "";
       editingProductId = null;
       document.getElementById("formTitle").textContent = "Crear Nuevo Producto";
       document.getElementById("submitBtn").textContent = "Crear Producto";
       document.getElementById("cancelBtn").style.display = "none";
 
-      // ============================================
-      // LIMPIAR UPLOAD Y PREVIEW (AGREGA ESTO)
-      // ============================================
-      document.getElementById("imageFile").value = "";
-      document.getElementById("uploadMessage").textContent = "";
-      document.getElementById("imagePreview").innerHTML = "";
-
-      // Recargar lista
       loadProducts();
     } else {
-      messageEl.textContent = "❌ " + data.message;
-      messageEl.style.color = "red";
+      alertError(data.message);
     }
   } catch (error) {
-    messageEl.textContent = "❌ Error: " + error.message;
-    messageEl.style.color = "red";
+    alertError(error.message, "Error de Conexión");
   }
 });
 
@@ -183,7 +180,6 @@ const editProduct = async (id) => {
     if (data.success) {
       const p = data.producto;
 
-      // Llenar el formulario
       document.getElementById("productId").value = p.id;
       document.getElementById("nombre").value = p.nombre;
       document.getElementById("descripcion").value = p.descripcion;
@@ -193,31 +189,23 @@ const editProduct = async (id) => {
       document.getElementById("categoria_id").value = p.categoria_id;
       document.getElementById("en_oferta").checked = p.en_oferta;
 
-      // Cambiar título y botón
       document.getElementById("formTitle").textContent = "Editar Producto";
       document.getElementById("submitBtn").textContent = "Actualizar Producto";
-      document.getElementById("cancelBtn").style.display = "inline-block";
+      document.getElementById("cancelBtn").style.display = "block";
 
-      editingProductId = id;
-
-      // ============================================
-      // LIMPIAR UPLOAD Y PREVIEW (AGREGA ESTO)
-      // ============================================
-      document.getElementById("imageFile").value = ""; // Limpiar input file
-      document.getElementById("uploadMessage").textContent = ""; // Limpiar mensaje
-
-      // Mostrar imagen actual
+      document.getElementById("imageFile").value = "";
+      document.getElementById("uploadMessage").textContent = "";
       document.getElementById("imagePreview").innerHTML = `
         <p><strong>Imagen actual:</strong></p>
         <img src="${p.imagen_url}" style="width: 200px; height: 200px; object-fit: cover; margin-top: 10px;">
         <p><em>Sube una nueva imagen si deseas cambiarla</em></p>
       `;
 
-      // Scroll al formulario
+      editingProductId = id;
       window.scrollTo(0, 0);
     }
   } catch (error) {
-    alert("Error al cargar producto");
+    alertError("No se pudo cargar el producto");
   }
 };
 
@@ -226,27 +214,24 @@ const editProduct = async (id) => {
 // ============================================
 document.getElementById("cancelBtn").addEventListener("click", () => {
   document.getElementById("productForm").reset();
+  document.getElementById("imagePreview").innerHTML = "";
+  document.getElementById("uploadMessage").textContent = "";
   editingProductId = null;
   document.getElementById("formTitle").textContent = "Crear Nuevo Producto";
   document.getElementById("submitBtn").textContent = "Crear Producto";
   document.getElementById("cancelBtn").style.display = "none";
-  document.getElementById("formMessage").textContent = "";
-
-  // ============================================
-  // LIMPIAR UPLOAD Y PREVIEW (AGREGA ESTO)
-  // ============================================
-  document.getElementById("imageFile").value = "";
-  document.getElementById("uploadMessage").textContent = "";
-  document.getElementById("imagePreview").innerHTML = "";
 });
 
 // ============================================
 // ELIMINAR PRODUCTO
 // ============================================
 const deleteProduct = async (id) => {
-  if (!confirm("¿Estás seguro de eliminar este producto?")) {
-    return;
-  }
+  const result = await alertConfirm(
+    "Esta acción no se puede deshacer",
+    "¿Eliminar producto?"
+  );
+
+  if (!result.isConfirmed) return;
 
   try {
     const response = await fetch(`${API_URL}/admin/products/${id}`, {
@@ -259,185 +244,18 @@ const deleteProduct = async (id) => {
     const data = await response.json();
 
     if (data.success) {
-      alert("✅ " + data.message);
+      alertSuccess(data.message, "¡Eliminado!");
       loadProducts();
     } else {
-      alert("❌ " + data.message);
+      alertError(data.message);
     }
   } catch (error) {
-    alert("❌ Error al eliminar producto");
+    alertError("No se pudo eliminar el producto");
   }
 };
 
 // ============================================
-// VER TOTAL DE VENTAS
-// ============================================
-document.getElementById("loadSalesBtn").addEventListener("click", async () => {
-  try {
-    const response = await fetch(`${API_URL}/admin/sales`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    const data = await response.json();
-
-    if (data.success) {
-      document.getElementById("salesInfo").innerHTML = `
-                <p><strong>Total de ventas:</strong> $${parseFloat(
-                  data.totalVentas
-                ).toFixed(2)}</p>
-                <p><strong>Número de órdenes:</strong> ${data.numeroOrdenes}</p>
-            `;
-    }
-  } catch (error) {
-    document.getElementById("salesInfo").innerHTML =
-      "<p>Error al cargar ventas</p>";
-  }
-});
-
-// ============================================
-// VER GRÁFICA DE VENTAS (con Chart.js)
-// ============================================
-document.getElementById("loadChartBtn").addEventListener("click", async () => {
-  try {
-    const response = await fetch(`${API_URL}/admin/sales-chart`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    const data = await response.json();
-
-    if (data.success) {
-      // Extraer datos de la API
-      const categorias = data.data.map((item) => item.categoria);
-      const ventas = data.data.map((item) => parseFloat(item.total_ventas));
-
-      // Mostrar el canvas
-      document.getElementById("salesChart").style.display = "block";
-
-      // Destruir gráfica anterior si existe
-      if (window.myChart) {
-        window.myChart.destroy();
-      }
-
-      // Crear nueva gráfica
-      const ctx = document.getElementById("salesChart").getContext("2d");
-      window.myChart = new Chart(ctx, {
-        type: "bar", // Puedes cambiar a 'pie' si prefieres pastel
-        data: {
-          labels: categorias,
-          datasets: [
-            {
-              label: "Total de Ventas ($)",
-              data: ventas,
-              backgroundColor: [
-                "#FF6384",
-                "#36A2EB",
-                "#FFCE56",
-                "#4BC0C0",
-                "#9966FF",
-              ],
-              borderColor: [
-                "#FF6384",
-                "#36A2EB",
-                "#FFCE56",
-                "#4BC0C0",
-                "#9966FF",
-              ],
-              borderWidth: 1,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              display: true,
-              position: "top",
-            },
-            title: {
-              display: true,
-              text: "Ventas por Categoría",
-            },
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                callback: function (value) {
-                  return "$" + value.toFixed(2);
-                },
-              },
-            },
-          },
-        },
-      });
-
-      // Mostrar también la tabla (opcional)
-      let html = "<h4>Datos detallados:</h4>";
-      html +=
-        '<table border="1" style="border-collapse: collapse; margin-top: 20px;">';
-      html +=
-        "<tr><th>Categoría</th><th>Total Vendidos</th><th>Total Ventas</th></tr>";
-
-      data.data.forEach((item) => {
-        html += `
-                    <tr>
-                        <td>${item.categoria}</td>
-                        <td>${item.total_vendidos}</td>
-                        <td>$${parseFloat(item.total_ventas).toFixed(2)}</td>
-                    </tr>
-                `;
-      });
-
-      html += "</table>";
-      document.getElementById("chartData").innerHTML = html;
-    }
-  } catch (error) {
-    document.getElementById("chartData").innerHTML =
-      "<p>Error al cargar gráfica</p>";
-  }
-});
-
-// ============================================
-// VER INVENTARIO
-// ============================================
-document
-  .getElementById("loadInventoryBtn")
-  .addEventListener("click", async () => {
-    try {
-      const response = await fetch(`${API_URL}/admin/inventory`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        let html = "";
-
-        for (const categoria in data.inventario) {
-          html += `<h4>${categoria}</h4>`;
-          html += "<ul>";
-          data.inventario[categoria].forEach((item) => {
-            html += `<li>${item.producto}: <strong>${item.stock}</strong> unidades</li>`;
-          });
-          html += "</ul>";
-        }
-
-        document.getElementById("inventoryData").innerHTML = html;
-      }
-    } catch (error) {
-      document.getElementById("inventoryData").innerHTML =
-        "<p>Error al cargar inventario</p>";
-    }
-  });
-
-// ============================================
-// SUBIR IMAGEN (CREAR PRODUCTO)
+// SUBIR IMAGEN
 // ============================================
 document
   .getElementById("uploadImageBtn")
@@ -474,10 +292,8 @@ document
         messageEl.textContent = "✅ Imagen subida exitosamente";
         messageEl.style.color = "green";
 
-        // Guardar URL en campo oculto
         document.getElementById("imagen_url").value = data.imageUrl;
 
-        // Mostrar preview
         previewEl.innerHTML = `<img src="${data.imageUrl}" style="width: 200px; height: 200px; object-fit: cover; margin-top: 10px;">`;
       } else {
         messageEl.textContent = "❌ " + data.message;
@@ -486,5 +302,164 @@ document
     } catch (error) {
       messageEl.textContent = "❌ Error: " + error.message;
       messageEl.style.color = "red";
+    }
+  });
+
+// ============================================
+// VER TOTAL DE VENTAS
+// ============================================
+document.getElementById("loadSalesBtn").addEventListener("click", async () => {
+  try {
+    const response = await fetch(`${API_URL}/admin/sales`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      document.getElementById("salesInfo").innerHTML = `
+        <p style="color: var(--accent-blue); font-size: 1.5rem; font-weight: 700;">
+          $${parseFloat(data.totalVentas).toFixed(2)}
+        </p>
+        <p style="color: var(--text-secondary);">
+          ${data.numeroOrdenes} órdenes completadas
+        </p>
+      `;
+    }
+  } catch (error) {
+    document.getElementById("salesInfo").innerHTML =
+      "<p>Error al cargar ventas</p>";
+  }
+});
+
+// ============================================
+// VER GRÁFICA DE VENTAS
+// ============================================
+document.getElementById("loadChartBtn").addEventListener("click", async () => {
+  try {
+    const response = await fetch(`${API_URL}/admin/sales-chart`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      const categorias = data.data.map((item) => item.categoria);
+      const ventas = data.data.map((item) => parseFloat(item.total_ventas));
+
+      document.getElementById("salesChart").style.display = "block";
+
+      if (window.myChart) {
+        window.myChart.destroy();
+      }
+
+      const ctx = document.getElementById("salesChart").getContext("2d");
+      window.myChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: categorias,
+          datasets: [
+            {
+              label: "Total de Ventas ($)",
+              data: ventas,
+              backgroundColor: ["#00d4ff", "#b537f2", "#ff006e"],
+              borderColor: ["#00d4ff", "#b537f2", "#ff006e"],
+              borderWidth: 2,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: true,
+              position: "top",
+              labels: { color: "#e0e7ff" },
+            },
+            title: {
+              display: true,
+              text: "Ventas por Categoría",
+              color: "#00d4ff",
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: "#e0e7ff",
+                callback: function (value) {
+                  return "$" + value.toFixed(2);
+                },
+              },
+              grid: { color: "#2d3561" },
+            },
+            x: {
+              ticks: { color: "#e0e7ff" },
+              grid: { color: "#2d3561" },
+            },
+          },
+        },
+      });
+
+      let html =
+        '<table style="width: 100%; margin-top: 1rem; border-collapse: collapse;">';
+      html +=
+        "<tr><th>Categoría</th><th>Total Vendidos</th><th>Total Ventas</th></tr>";
+
+      data.data.forEach((item) => {
+        html += `
+          <tr>
+            <td>${item.categoria}</td>
+            <td>${item.total_vendidos}</td>
+            <td>$${parseFloat(item.total_ventas).toFixed(2)}</td>
+          </tr>
+        `;
+      });
+
+      html += "</table>";
+      document.getElementById("chartData").innerHTML = html;
+    }
+  } catch (error) {
+    document.getElementById("chartData").innerHTML =
+      "<p>Error al cargar gráfica</p>";
+  }
+});
+
+// ============================================
+// VER INVENTARIO
+// ============================================
+document
+  .getElementById("loadInventoryBtn")
+  .addEventListener("click", async () => {
+    try {
+      const response = await fetch(`${API_URL}/admin/inventory`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        let html = "";
+
+        for (const categoria in data.inventario) {
+          html += `<h4 style="color: var(--accent-blue); margin-top: 1rem;">${categoria}</h4>`;
+          html += "<ul>";
+          data.inventario[categoria].forEach((item) => {
+            html += `<li style="color: var(--text-secondary);">${item.producto}: <strong style="color: var(--text-primary);">${item.stock}</strong> unidades</li>`;
+          });
+          html += "</ul>";
+        }
+
+        document.getElementById("inventoryData").innerHTML = html;
+      }
+    } catch (error) {
+      document.getElementById("inventoryData").innerHTML =
+        "<p>Error al cargar inventario</p>";
     }
   });

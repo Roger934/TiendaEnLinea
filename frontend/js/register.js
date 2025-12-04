@@ -11,7 +11,16 @@ document
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
     const password2 = document.getElementById("password2").value;
-    const messageEl = document.getElementById("message");
+
+    // Mostrar loading
+    Swal.fire({
+      title: "Registrando...",
+      text: "Por favor espera",
+      background: "#1a2038",
+      color: "#e0e7ff",
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading(),
+    });
 
     try {
       const response = await fetch(`${API_URL}/auth/register`, {
@@ -25,19 +34,36 @@ document
       const data = await response.json();
 
       if (data.success) {
-        messageEl.textContent = "✅ " + data.message;
-        messageEl.style.color = "green";
-
-        // Redirigir al login después de 2 segundos
-        setTimeout(() => {
+        Swal.fire({
+          icon: "success",
+          title: "¡Registro Exitoso!",
+          text: data.message,
+          background: "#1a2038",
+          color: "#e0e7ff",
+          confirmButtonColor: "#00d4ff",
+          timer: 2000,
+          showConfirmButton: false,
+        }).then(() => {
           window.location.href = "login.html";
-        }, 2000);
+        });
       } else {
-        messageEl.textContent = "❌ " + data.message;
-        messageEl.style.color = "red";
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: data.message,
+          background: "#1a2038",
+          color: "#e0e7ff",
+          confirmButtonColor: "#ff006e",
+        });
       }
     } catch (error) {
-      messageEl.textContent = "❌ Error: " + error.message;
-      messageEl.style.color = "red";
+      Swal.fire({
+        icon: "error",
+        title: "Error de Conexión",
+        text: error.message,
+        background: "#1a2038",
+        color: "#e0e7ff",
+        confirmButtonColor: "#ff006e",
+      });
     }
   });

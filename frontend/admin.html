@@ -4,125 +4,200 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Panel de Administración - TechStore</title>
+    <link rel="stylesheet" href="css/styles.css" />
+
+    <!-- SweetAlert2 -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Alerts personalizados -->
+    <script src="js/alerts.js"></script>
+
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body>
-    <h1>Panel de Administración - TechStore</h1>
+    <!-- HEADER -->
+    <header>
+      <div class="container">
+        <div class="header-content">
+          <a href="index.html" class="logo">
+            <img
+              src="https://img.icons8.com/nolan/64/processor.png"
+              alt="TechStore Logo"
+            />
+            <div class="logo-text">
+              <h1>TechStore</h1>
+              <p>Panel Admin</p>
+            </div>
+          </a>
 
-    <p id="adminInfo"></p>
-    <button id="logoutBtn">Cerrar Sesión</button>
-    <p><a href="index.html">← Volver a la tienda</a></p>
+          <div class="user-info">
+            <span id="adminInfo" class="user-name"></span>
 
-    <hr />
+            <div class="accessibility-controls">
+              <button id="themeToggle" class="icon-btn" title="Cambiar tema">
+                🌙
+              </button>
+              <button
+                id="increaseFontBtn"
+                class="icon-btn"
+                title="Aumentar texto"
+              >
+                A⁺
+              </button>
+              <button
+                id="decreaseFontBtn"
+                class="icon-btn"
+                title="Reducir texto"
+              >
+                A⁻
+              </button>
+            </div>
 
-    <!-- ============================================ -->
-    <!-- SECCIÓN 1: CREAR/EDITAR PRODUCTO -->
-    <!-- ============================================ -->
-    <h2>Gestión de Productos</h2>
+            <a href="index.html" class="btn-secondary">← Volver</a>
+            <button id="logoutBtn" class="btn-primary">Cerrar Sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
 
-    <h3 id="formTitle">Crear Nuevo Producto</h3>
+    <!-- MAIN -->
+    <main>
+      <div class="container">
+        <h2>Gestión de Productos</h2>
 
-    <form id="productForm">
-      <input type="hidden" id="productId" />
+        <!-- FORMULARIO -->
+        <div class="auth-card admin-form-wide">
+          <h3 id="formTitle" class="auth-title">Crear Nuevo Producto</h3>
 
-      <label>Nombre:</label><br />
-      <input
-        type="text"
-        id="nombre"
-        required
-        style="width: 400px"
-      /><br /><br />
+          <form id="productForm" class="auth-form">
+            <input type="hidden" id="productId" />
 
-      <label>Descripción:</label><br />
-      <textarea
-        id="descripcion"
-        required
-        style="width: 400px; height: 80px"
-      ></textarea
-      ><br /><br />
+            <div class="form-group">
+              <label>Nombre:</label>
+              <input type="text" id="nombre" required />
+            </div>
 
-      <label>Precio:</label><br />
-      <input type="number" id="precio" step="0.01" required /><br /><br />
+            <div class="form-group">
+              <label>Descripción:</label>
+              <textarea id="descripcion" required rows="4"></textarea>
+            </div>
 
-      <!-- SUBIR IMAGEN A CLOUDINARY -->
-      <label>Imagen del Producto:</label><br />
-      <input type="file" id="imageFile" accept="image/*" /><br />
-      <button type="button" id="uploadImageBtn" style="margin-top: 10px">
-        📤 Subir Imagen a Cloudinary
-      </button>
-      <p id="uploadMessage" style="margin: 10px 0"></p>
-      <input type="hidden" id="imagen_url" />
-      <div id="imagePreview"></div>
-      <br />
+            <div class="form-group">
+              <label>Precio:</label>
+              <input type="number" id="precio" step="0.01" required />
+            </div>
 
-      <label>Stock:</label><br />
-      <input type="number" id="stock" required /><br /><br />
+            <div class="form-group">
+              <label>Imagen del Producto:</label>
+              <input type="file" id="imageFile" accept="image/*" />
+              <button
+                type="button"
+                id="uploadImageBtn"
+                class="btn-secondary"
+                style="margin-top: 10px"
+              >
+                📤 Subir Imagen
+              </button>
+              <p id="uploadMessage" style="margin: 10px 0"></p>
+              <input type="hidden" id="imagen_url" />
+              <div id="imagePreview"></div>
+            </div>
 
-      <label>Categoría:</label><br />
-      <select id="categoria_id" required>
-        <option value="1">Procesadores</option>
-        <option value="2">Memorias RAM</option>
-        <option value="3">Tarjetas Gráficas</option></select
-      ><br /><br />
+            <div class="form-group">
+              <label>Stock:</label>
+              <input type="number" id="stock" required />
+            </div>
 
-      <label>
-        <input type="checkbox" id="en_oferta" />
-        En oferta </label
-      ><br /><br />
+            <div class="form-group">
+              <label>Categoría:</label>
+              <select id="categoria_id" required>
+                <option value="1">Procesadores</option>
+                <option value="2">Memorias RAM</option>
+                <option value="3">Tarjetas Gráficas</option>
+              </select>
+            </div>
 
-      <button type="submit" id="submitBtn">Crear Producto</button>
-      <button type="button" id="cancelBtn" style="display: none">
-        Cancelar
-      </button>
-    </form>
+            <div class="form-group">
+              <label class="checkbox-group">
+                <input type="checkbox" id="en_oferta" />
+                En oferta
+              </label>
+            </div>
 
-    <p id="formMessage"></p>
+            <button type="submit" id="submitBtn" class="btn-primary w-100">
+              Crear Producto
+            </button>
+            <button
+              type="button"
+              id="cancelBtn"
+              class="btn-secondary w-100"
+              style="display: none; margin-top: 10px"
+            >
+              Cancelar
+            </button>
+          </form>
+        </div>
 
-    <hr />
+        <!-- LISTA DE PRODUCTOS -->
+        <h2 style="margin-top: 3rem">Productos Existentes</h2>
+        <div id="productsContainer" style="overflow-x: auto">
+          <p>Cargando productos...</p>
+        </div>
 
-    <!-- ============================================ -->
-    <!-- SECCIÓN 2: LISTA DE PRODUCTOS -->
-    <!-- ============================================ -->
-    <h2>Productos Existentes</h2>
+        <!-- REPORTES -->
+        <h2 style="margin-top: 3rem">Reportes</h2>
 
-    <div id="productsContainer">
-      <p>Cargando productos...</p>
-    </div>
+        <div class="admin-reports">
+          <div class="report-card">
+            <h3>Total de Ventas</h3>
+            <button id="loadSalesBtn" class="btn-primary">
+              Ver Total de Ventas
+            </button>
+            <div id="salesInfo" style="margin-top: 1rem"></div>
+          </div>
 
-    <hr />
+          <div class="report-card">
+            <h3>Ventas por Categoría</h3>
+            <button id="loadChartBtn" class="btn-primary">Ver Gráfica</button>
+            <canvas
+              id="salesChart"
+              style="max-width: 100%; margin-top: 20px; display: none"
+            ></canvas>
+            <div id="chartData" style="margin-top: 1rem"></div>
+          </div>
 
-    <!-- ============================================ -->
-    <!-- SECCIÓN 3: REPORTES -->
-    <!-- ============================================ -->
-    <h2>Reportes</h2>
+          <div class="report-card">
+            <h3>Inventario</h3>
+            <button id="loadInventoryBtn" class="btn-primary">
+              Ver Inventario
+            </button>
+            <div id="inventoryData" style="margin-top: 1rem"></div>
+          </div>
+        </div>
+      </div>
+    </main>
 
-    <h3>Total de Ventas de la Empresa</h3>
-    <button id="loadSalesBtn">Ver Total de Ventas</button>
-    <div id="salesInfo"></div>
+    <!-- FOOTER -->
+    <footer>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-brand">
+            <h2>TechStore</h2>
+            <p>Panel de Administración</p>
+          </div>
+          <div class="footer-copyright">
+            <p>© 2025 TechStore | Proyecto Académico</p>
+          </div>
+        </div>
+      </div>
+    </footer>
 
-    <hr />
-
-    <h3>Gráfica de Ventas por Categoría</h3>
-    <button id="loadChartBtn">Ver Gráfica de Ventas</button>
-
-    <!-- Canvas para la gráfica -->
-    <canvas
-      id="salesChart"
-      width="600"
-      height="300"
-      style="max-width: 100%; margin-top: 20px; display: none"
-    ></canvas>
-
-    <!-- Tabla de datos -->
-    <div id="chartData"></div>
-
-    <hr />
-
-    <h3>Inventario por Categoría</h3>
-    <button id="loadInventoryBtn">Ver Inventario</button>
-    <div id="inventoryData"></div>
-
+    <script src="js/accessibility.js"></script>
     <script src="js/admin.js"></script>
   </body>
 </html>

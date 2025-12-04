@@ -44,7 +44,16 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
   const password = document.getElementById("password").value;
   const captchaText = document.getElementById("captchaInput").value;
   const captchaToken = document.getElementById("captchaToken").value;
-  const messageEl = document.getElementById("message");
+
+  // Mostrar loading
+  Swal.fire({
+    title: "Iniciando sesión...",
+    text: "Por favor espera",
+    background: "#1a2038",
+    color: "#e0e7ff",
+    allowOutsideClick: false,
+    didOpen: () => Swal.showLoading(),
+  });
 
   try {
     const response = await fetch(`${API_URL}/auth/login`, {
@@ -61,23 +70,42 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      messageEl.textContent = "✅ " + data.message;
-      messageEl.style.color = "green";
-
-      setTimeout(() => {
-        window.location.href = "index.html";
-      }, 1000);
+      Swal.fire({
+        icon: "success",
+        title: "¡Bienvenido!",
+        text: data.message,
+        background: "#1a2038",
+        color: "#e0e7ff",
+        confirmButtonColor: "#00d4ff",
+        timer: 1500,
+        showConfirmButton: false,
+      }).then(() => {
+        window.location.href =
+          data.user.rol === "admin" ? "admin.html" : "index.html";
+      });
     } else {
-      messageEl.textContent = "❌ " + data.message;
-      messageEl.style.color = "red";
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: data.message,
+        background: "#1a2038",
+        color: "#e0e7ff",
+        confirmButtonColor: "#ff006e",
+      });
 
       // Recargar captcha después de error
       loadCaptcha();
       document.getElementById("captchaInput").value = "";
     }
   } catch (error) {
-    messageEl.textContent = "❌ Error: " + error.message;
-    messageEl.style.color = "red";
+    Swal.fire({
+      icon: "error",
+      title: "Error de Conexión",
+      text: error.message,
+      background: "#1a2038",
+      color: "#e0e7ff",
+      confirmButtonColor: "#ff006e",
+    });
 
     // Recargar captcha después de error
     loadCaptcha();

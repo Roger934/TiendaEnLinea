@@ -8,10 +8,16 @@ document
     e.preventDefault();
 
     const email = document.getElementById("email").value;
-    const messageEl = document.getElementById("message");
 
-    messageEl.textContent = "Enviando...";
-    messageEl.style.color = "blue";
+    // Mostrar loading
+    Swal.fire({
+      title: "Enviando...",
+      text: "Por favor espera",
+      background: "#1a2038",
+      color: "#e0e7ff",
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading(),
+    });
 
     try {
       const response = await fetch(`${API_URL}/auth/forgot-password`, {
@@ -25,15 +31,34 @@ document
       const data = await response.json();
 
       if (data.success) {
-        messageEl.textContent = "✅ " + data.message;
-        messageEl.style.color = "green";
+        Swal.fire({
+          icon: "success",
+          title: "¡Correo Enviado!",
+          text: data.message,
+          background: "#1a2038",
+          color: "#e0e7ff",
+          confirmButtonColor: "#00d4ff",
+        });
+
         document.getElementById("forgotPasswordForm").reset();
       } else {
-        messageEl.textContent = "❌ " + data.message;
-        messageEl.style.color = "red";
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: data.message,
+          background: "#1a2038",
+          color: "#e0e7ff",
+          confirmButtonColor: "#ff006e",
+        });
       }
     } catch (error) {
-      messageEl.textContent = "❌ Error: " + error.message;
-      messageEl.style.color = "red";
+      Swal.fire({
+        icon: "error",
+        title: "Error de Conexión",
+        text: error.message,
+        background: "#1a2038",
+        color: "#e0e7ff",
+        confirmButtonColor: "#ff006e",
+      });
     }
   });

@@ -8,7 +8,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   const userInfoEl = document.getElementById("userInfo");
 
   if (!token) {
-    // Si no hay token, redirigir al login
+    alertError("Debes iniciar sesión para acceder a esta página");
     window.location.href = "login.html";
     return;
   }
@@ -26,28 +26,34 @@ window.addEventListener("DOMContentLoaded", async () => {
 
     if (data.success) {
       const user = JSON.parse(localStorage.getItem("user"));
+
       userInfoEl.innerHTML = `
-                <p>Nombre: ${user.nombre}</p>
-                <p>Email: ${user.email}</p>
-                <p>Rol: ${user.rol}</p>
-            `;
+        <p><strong>Nombre:</strong> ${user.nombre}</p>
+        <p><strong>Email:</strong> ${user.email}</p>
+        <p><strong>Rol:</strong> ${user.rol}</p>
+      `;
     } else {
-      // Token inválido, redirigir al login
+      alertError("Tu sesión ha expirado. Por favor inicia sesión nuevamente.");
       localStorage.clear();
       window.location.href = "login.html";
     }
   } catch (error) {
     console.error("Error:", error);
+    alertError("Error de conexión. Por favor inicia sesión nuevamente.");
     localStorage.clear();
     window.location.href = "login.html";
   }
 });
 
 // Logout
-
 document.getElementById("logoutBtn").addEventListener("click", () => {
-  // Limpiar TODO el localStorage
-  localStorage.clear();
-
-  window.location.href = "login.html";
+  alertConfirm("¿Deseas cerrar sesión?", "Confirmar Logout").then((result) => {
+    if (result.isConfirmed) {
+      localStorage.clear();
+      alertSuccess("Sesión cerrada correctamente");
+      setTimeout(() => {
+        window.location.href = "login.html";
+      }, 1200);
+    }
+  });
 });

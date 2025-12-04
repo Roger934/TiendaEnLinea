@@ -4,132 +4,238 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Finalizar Compra - TechStore</title>
-    <style>
-      .box {
-        border: 1px solid #ccc;
-        padding: 12px;
-        margin-top: 10px;
-        width: 350px;
-        background: #fafafa;
-        border-radius: 5px;
-      }
-      .small-input {
-        width: 140px;
-      }
-    </style>
+    <link rel="stylesheet" href="css/styles.css" />
+
+    <!-- SweetAlert2 -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Alerts personalizados -->
+    <script src="js/alerts.js"></script>
   </head>
   <body>
-    <h1>Finalizar Compra - TechStore</h1>
+    <!-- HEADER -->
+    <header>
+      <div class="container">
+        <div class="header-content">
+          <a href="index.html" class="logo">
+            <img
+              src="https://img.icons8.com/nolan/64/processor.png"
+              alt="TechStore Logo"
+            />
+            <div class="logo-text">
+              <h1>TechStore</h1>
+              <p>Potencia tu PC</p>
+            </div>
+          </a>
 
-    <p><a href="cart.html">← Volver al carrito</a></p>
+          <div class="user-info">
+            <span id="userName" class="user-name" style="display: none"></span>
 
-    <hr />
+            <div class="accessibility-controls">
+              <button id="themeToggle" class="icon-btn" title="Cambiar tema">
+                🌙
+              </button>
+              <button
+                id="increaseFontBtn"
+                class="icon-btn"
+                title="Aumentar texto"
+              >
+                A⁺
+              </button>
+              <button
+                id="decreaseFontBtn"
+                class="icon-btn"
+                title="Reducir texto"
+              >
+                A⁻
+              </button>
+            </div>
 
-    <!-- RESUMEN DEL CARRITO -->
-    <h2>Resumen de tu pedido</h2>
-    <div id="cartSummary">
-      <p>Cargando...</p>
-    </div>
-
-    <hr />
-
-    <!-- FORMULARIO DE CHECKOUT -->
-    <h2>Datos de Envío</h2>
-
-    <form id="checkoutForm">
-      <label>Dirección:</label><br />
-      <input
-        type="text"
-        id="direccion"
-        required
-        style="width: 400px"
-        placeholder="Calle y número"
-      /><br /><br />
-
-      <label>Ciudad:</label><br />
-      <input
-        type="text"
-        id="ciudad"
-        required
-        placeholder="Ciudad"
-      /><br /><br />
-
-      <label>Código Postal:</label><br />
-      <input
-        type="text"
-        id="codigoPostal"
-        required
-        placeholder="CP"
-      /><br /><br />
-
-      <label
-        ><strong>País:</strong> (Los impuestos y envío dependen del país
-        seleccionado)</label
-      ><br />
-      <select id="pais" required>
-        <option value="">-- Selecciona tu país --</option>
-        <option value="Mexico">México</option>
-        <option value="USA">Estados Unidos</option>
-        <option value="España">España</option>
-        <option value="Canada">Canadá</option>
-        <option value="Argentina">Argentina</option>
-        <option value="Colombia">Colombia</option>
-        <option value="Chile">Chile</option>
-        <option value="Peru">Perú</option></select
-      ><br /><br />
-
-      <label>Teléfono:</label><br />
-      <input
-        type="tel"
-        id="telefono"
-        required
-        placeholder="Teléfono de contacto"
-      /><br /><br />
-
-      <hr />
-
-      <h3>Método de Pago</h3>
-
-      <label>
-        <input type="radio" name="metodoPago" value="tarjeta" checked />
-        Tarjeta de Crédito/Débito </label
-      ><br />
-
-      <label>
-        <input type="radio" name="metodoPago" value="transferencia" />
-        Transferencia Bancaria </label
-      ><br />
-
-      <label>
-        <input type="radio" name="metodoPago" value="oxxo" />
-        Pago en Oxxo </label
-      ><br /><br />
-      <!-- 🔥 NUEVA SECCIÓN -->
-      <div id="paymentFields" class="box"></div>
-      <hr />
-
-      <h3>Cupón de Descuento (opcional)</h3>
-      <input
-        type="text"
-        id="codigoCupon"
-        placeholder="Ingresa tu cupón (ej: BIENVENIDO10)"
-      /><br /><br />
-
-      <hr />
-
-      <!-- PREVIEW DE COSTOS -->
-      <h2>Desglose de Costos</h2>
-      <div id="costPreview">
-        <p><em>Selecciona un país para ver el desglose de costos</em></p>
+            <button id="logoutBtn" class="btn-secondary" style="display: none">
+              Cerrar Sesión
+            </button>
+          </div>
+        </div>
       </div>
+    </header>
 
-      <hr />
+    <!-- MAIN -->
+    <main>
+      <div class="container">
+        <div style="margin-bottom: 2rem">
+          <a href="cart.html" class="btn-secondary">← Volver al carrito</a>
+        </div>
 
-      <button type="submit">Finalizar Compra</button>
-    </form>
+        <h2>Finalizar Compra</h2>
 
-    <p id="message"></p>
+        <div class="checkout-grid">
+          <!-- COLUMNA IZQUIERDA: FORMULARIO -->
+          <div class="checkout-form-section">
+            <!-- RESUMEN DEL CARRITO -->
+            <div class="checkout-card">
+              <h3>Resumen del Pedido</h3>
+              <div id="cartSummary">
+                <p>Cargando...</p>
+              </div>
+            </div>
 
+            <!-- DATOS DE ENVÍO -->
+            <div class="checkout-card">
+              <h3>Datos de Envío</h3>
+              <form id="checkoutForm" class="auth-form">
+                <div class="form-group">
+                  <label>Dirección:</label>
+                  <input
+                    type="text"
+                    id="direccion"
+                    required
+                    placeholder="Calle y número"
+                  />
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Ciudad:</label>
+                    <input
+                      type="text"
+                      id="ciudad"
+                      required
+                      placeholder="Ciudad"
+                    />
+                  </div>
+
+                  <div class="form-group">
+                    <label>Código Postal:</label>
+                    <input
+                      type="text"
+                      id="codigoPostal"
+                      required
+                      placeholder="CP"
+                    />
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label>País:</label>
+                  <select id="pais" required>
+                    <option value="">-- Selecciona tu país --</option>
+                    <option value="Mexico">México</option>
+                    <option value="USA">Estados Unidos</option>
+                    <option value="España">España</option>
+                    <option value="Canada">Canadá</option>
+                    <option value="Argentina">Argentina</option>
+                    <option value="Colombia">Colombia</option>
+                    <option value="Chile">Chile</option>
+                    <option value="Peru">Perú</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label>Teléfono:</label>
+                  <input
+                    type="tel"
+                    id="telefono"
+                    required
+                    placeholder="Teléfono de contacto"
+                  />
+                </div>
+
+                <!-- MÉTODO DE PAGO -->
+                <div class="checkout-card" style="margin-top: 2rem">
+                  <h3>Método de Pago</h3>
+
+                  <div class="payment-methods">
+                    <label class="payment-option">
+                      <input
+                        type="radio"
+                        name="metodoPago"
+                        value="tarjeta"
+                        checked
+                      />
+                      <span class="payment-icon">💳</span>
+                      <span>Tarjeta de Crédito/Débito</span>
+                    </label>
+
+                    <label class="payment-option">
+                      <input
+                        type="radio"
+                        name="metodoPago"
+                        value="transferencia"
+                      />
+                      <span class="payment-icon">🏦</span>
+                      <span>Transferencia Bancaria</span>
+                    </label>
+
+                    <label class="payment-option">
+                      <input type="radio" name="metodoPago" value="oxxo" />
+                      <span class="payment-icon">🏪</span>
+                      <span>Pago en Oxxo</span>
+                    </label>
+                  </div>
+
+                  <div id="paymentFields" class="payment-fields"></div>
+                </div>
+
+                <!-- CUPÓN -->
+                <div class="form-group" style="margin-top: 2rem">
+                  <label>Cupón de Descuento (opcional):</label>
+                  <input
+                    type="text"
+                    id="codigoCupon"
+                    placeholder="Ej: BIENVENIDO10"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  class="btn-primary w-100"
+                  style="margin-top: 2rem; padding: 1rem"
+                >
+                  Finalizar Compra 🚀
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- COLUMNA DERECHA: DESGLOSE DE COSTOS -->
+          <div class="checkout-summary-section">
+            <div class="checkout-card sticky-summary">
+              <h3>Desglose de Costos</h3>
+              <div id="costPreview">
+                <p><em>Selecciona un país para ver el desglose</em></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-brand">
+            <h2>TechStore</h2>
+            <p>Potencia tu PC con los mejores componentes</p>
+          </div>
+          <div class="footer-links">
+            <a href="faq.html">FAQ</a>
+            <a href="nosotros.html">Nosotros</a>
+            <a href="contact.html">Contacto</a>
+            <a href="admin.html" id="adminLink" style="display: none">Admin</a>
+          </div>
+          <div class="footer-copyright">
+            <p>© 2025 TechStore | Proyecto Académico</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="js/accessibility.js"></script>
     <script src="js/checkout.js"></script>
   </body>
 </html>

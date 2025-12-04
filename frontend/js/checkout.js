@@ -10,13 +10,39 @@ let subtotalGlobal = 0;
 // ============================================
 window.addEventListener("DOMContentLoaded", async () => {
   if (!token) {
-    alert("⚠️ Debes iniciar sesión");
-    window.location.href = "login.html";
+    alertError("Debes iniciar sesión para continuar", "Sesión Requerida");
+    setTimeout(() => {
+      window.location.href = "login.html";
+    }, 2000);
     return;
+  }
+
+  // Actualizar header
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  if (user.nombre) {
+    document.getElementById("userName").textContent = user.nombre;
+    document.getElementById("userName").style.display = "flex";
+    document.getElementById("logoutBtn").style.display = "block";
+  }
+
+  // Mostrar Admin link si es admin
+  const adminLink = document.getElementById("adminLink");
+  if (adminLink && user.rol === "admin") {
+    adminLink.style.display = "inline-block";
   }
 
   await loadCartSummary();
   setupCountryChangeListener();
+  setupPaymentMethodListener();
+  renderPaymentFields("tarjeta"); // Inicializar con tarjeta
+});
+
+// ============================================
+// LOGOUT
+// ============================================
+document.getElementById("logoutBtn")?.addEventListener("click", () => {
+  localStorage.clear();
+  window.location.href = "index.html";
 });
 
 // ============================================
@@ -25,9 +51,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 const loadCartSummary = async () => {
   try {
     const response = await fetch(`${API_URL}/cart`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     });
 
     const data = await response.json();
@@ -42,7 +66,7 @@ const loadCartSummary = async () => {
   } catch (error) {
     console.error("Error:", error);
     document.getElementById("cartSummary").innerHTML =
-      "<p>Error al cargar carrito: " + error.message + "</p>";
+      "<p>Error: " + error.message + "</p>";
   }
 };
 
@@ -54,22 +78,25 @@ const displayCartSummary = (items, subtotal) => {
     return;
   }
 
-  let html = "<ul>";
+  let html = '<div class="summary-items">';
   items.forEach((item) => {
-    html += `<li>${item.nombre} x ${item.cantidad} - $${(
-      parseFloat(item.precio) * item.cantidad
-    ).toFixed(2)}</li>`;
+    html += `
+      <div class="summary-item">
+        <span>${item.nombre} x ${item.cantidad}</span>
+        <span>$${(parseFloat(item.precio) * item.cantidad).toFixed(2)}</span>
+      </div>
+    `;
   });
-  html += "</ul>";
-  html += `<p><strong>Subtotal: $${parseFloat(subtotal).toFixed(
-    2
-  )}</strong></p>`;
+  html += "</div>";
+  html += `<div class="summary-subtotal">Subtotal: $${parseFloat(
+    subtotal
+  ).toFixed(2)}</div>`;
 
   container.innerHTML = html;
 };
 
 // ============================================
-// CALCULAR IMPUESTOS Y ENVÍO SEGÚN PAÍS
+// CALCULAR COSTOS SEGÚN PAÍS
 // ============================================
 const calcularCostos = (pais) => {
   let tasaImpuesto = 0;
@@ -126,13 +153,7 @@ const calcularCostos = (pais) => {
   const impuestos = subtotalGlobal * tasaImpuesto;
   const total = subtotalGlobal + impuestos + costoEnvio;
 
-  return {
-    nombreImpuesto,
-    tasaImpuesto,
-    impuestos,
-    costoEnvio,
-    total,
-  };
+  return { nombreImpuesto, tasaImpuesto, impuestos, costoEnvio, total };
 };
 
 // ============================================
@@ -143,7 +164,7 @@ const mostrarPreviewCostos = (pais) => {
 
   if (!pais) {
     container.innerHTML =
-      "<p><em>Selecciona un país para ver el desglose de costos</em></p>";
+      "<p><em>Selecciona un país para ver el desglose</em></p>";
     return;
   }
 
@@ -156,36 +177,36 @@ const mostrarPreviewCostos = (pais) => {
   if (cupon && cupon.toUpperCase() === "BIENVENIDO10") {
     descuento = subtotalGlobal * 0.1;
     descuentoHtml = `
-            <tr>
-                <td>Descuento (BIENVENIDO10):</td>
-                <td style="color: green;">-$${descuento.toFixed(2)}</td>
-            </tr>
-        `;
+      <div class="cost-line discount">
+        <span>Descuento (BIENVENIDO10):</span>
+        <span>-$${descuento.toFixed(2)}</span>
+      </div>
+    `;
   }
 
   const totalFinal = costos.total - descuento;
 
   container.innerHTML = `
-        <table border="1" style="width: 100%; border-collapse: collapse;">
-            <tr>
-                <td><strong>Subtotal:</strong></td>
-                <td><strong>$${subtotalGlobal.toFixed(2)}</strong></td>
-            </tr>
-            <tr>
-                <td>${costos.nombreImpuesto}:</td>
-                <td>$${costos.impuestos.toFixed(2)}</td>
-            </tr>
-            <tr>
-                <td>Envío a ${pais}:</td>
-                <td>$${costos.costoEnvio.toFixed(2)}</td>
-            </tr>
-            ${descuentoHtml}
-            <tr style="background-color: #f0f0f0;">
-                <td><strong>TOTAL:</strong></td>
-                <td><strong>$${totalFinal.toFixed(2)}</strong></td>
-            </tr>
-        </table>
-    `;
+    <div class="cost-breakdown">
+      <div class="cost-line">
+        <span>Subtotal:</span>
+        <span>$${subtotalGlobal.toFixed(2)}</span>
+      </div>
+      <div class="cost-line">
+        <span>${costos.nombreImpuesto}:</span>
+        <span>$${costos.impuestos.toFixed(2)}</span>
+      </div>
+      <div class="cost-line">
+        <span>Envío a ${pais}:</span>
+        <span>$${costos.costoEnvio.toFixed(2)}</span>
+      </div>
+      ${descuentoHtml}
+      <div class="cost-line total">
+        <span>TOTAL:</span>
+        <span>$${totalFinal.toFixed(2)}</span>
+      </div>
+    </div>
+  `;
 };
 
 // ============================================
@@ -197,7 +218,6 @@ const setupCountryChangeListener = () => {
 
   if (paisSelect) {
     paisSelect.addEventListener("change", (e) => {
-      console.log("País seleccionado:", e.target.value);
       mostrarPreviewCostos(e.target.value);
     });
   }
@@ -210,6 +230,71 @@ const setupCountryChangeListener = () => {
       }
     });
   }
+};
+
+// ============================================
+// MOSTRAR CAMPOS SEGÚN MÉTODO DE PAGO
+// ============================================
+const renderPaymentFields = (metodo) => {
+  const paymentFields = document.getElementById("paymentFields");
+
+  if (metodo === "tarjeta") {
+    paymentFields.innerHTML = `
+      <div class="form-group">
+        <label>Número de tarjeta:</label>
+        <input type="text" id="numeroTarjeta" placeholder="XXXX-XXXX-XXXX-XXXX" required />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Fecha de expiración:</label>
+          <input type="text" id="expiracion" placeholder="MM/AA" required />
+        </div>
+
+        <div class="form-group">
+          <label>CVV:</label>
+          <input type="text" id="cvv" placeholder="123" required />
+        </div>
+      </div>
+    `;
+  }
+
+  if (metodo === "transferencia") {
+    paymentFields.innerHTML = `
+      <div class="payment-info">
+        <h4>Datos Bancarios</h4>
+        <p><strong>Banco:</strong> BBVA</p>
+        <p><strong>Cuenta:</strong> 0123456789</p>
+        <p><strong>CLABE:</strong> 123456789012345678</p>
+        <p style="color: var(--accent-blue); margin-top: 1rem;">
+          Una vez hecha la transferencia, tu orden se procesará automáticamente.
+        </p>
+      </div>
+    `;
+  }
+
+  if (metodo === "oxxo") {
+    const referencia = Math.floor(Math.random() * 900000000000) + 100000000000;
+
+    paymentFields.innerHTML = `
+      <div class="payment-info">
+        <h4>Pago en OXXO</h4>
+        <p>Lleva esta referencia a cualquier tienda OXXO:</p>
+        <p class="oxxo-reference">${referencia}</p>
+        <p style="color: var(--accent-blue); margin-top: 1rem;">
+          Tu orden se confirmará cuando realices el pago.
+        </p>
+      </div>
+    `;
+  }
+};
+
+const setupPaymentMethodListener = () => {
+  document.querySelectorAll('input[name="metodoPago"]').forEach((radio) => {
+    radio.addEventListener("change", (e) => {
+      renderPaymentFields(e.target.value);
+    });
+  });
 };
 
 // ============================================
@@ -230,40 +315,47 @@ document
     ).value;
     const codigoCupon = document.getElementById("codigoCupon").value;
 
-    // ======================== PAGOS SIMULADOS ============================
+    if (!pais) {
+      alertError("Debes seleccionar un país", "Campo Requerido");
+      return;
+    }
+
+    // Datos de pago simulados
     let datosPago = {};
 
     if (metodoPago === "tarjeta") {
-      datosPago = {
-        numeroTarjeta: document.getElementById("numeroTarjeta").value,
-        expiracion: document.getElementById("expiracion").value,
-        cvv: document.getElementById("cvv").value,
-      };
+      const numeroTarjeta = document.getElementById("numeroTarjeta")?.value;
+      const expiracion = document.getElementById("expiracion")?.value;
+      const cvv = document.getElementById("cvv")?.value;
+
+      if (!numeroTarjeta || !expiracion || !cvv) {
+        alertError("Completa los datos de la tarjeta", "Datos Incompletos");
+        return;
+      }
+
+      datosPago = { numeroTarjeta, expiracion, cvv };
     }
 
     if (metodoPago === "transferencia") {
-      datosPago = {
-        referenciaTransferencia: "pendiente",
-      };
+      datosPago = { referenciaTransferencia: "pendiente" };
     }
 
     if (metodoPago === "oxxo") {
       datosPago = {
-        referenciaOxxo: paymentFields.innerText,
+        referenciaOxxo:
+          document.querySelector(".oxxo-reference")?.textContent || "pendiente",
       };
     }
 
-    // ================== PAIS ======================
-
-    if (!pais) {
-      alert("⚠️ Debes seleccionar un país");
-      return;
-    }
-
-    const messageEl = document.getElementById("message");
-    messageEl.textContent =
-      "Procesando compra... Esto puede tomar unos segundos.";
-    messageEl.style.color = "blue";
+    // Mostrar alerta de procesamiento
+    Swal.fire({
+      title: "Procesando compra...",
+      text: "Por favor espera",
+      background: "#1a2038",
+      color: "#e0e7ff",
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading(),
+    });
 
     try {
       const response = await fetch(`${API_URL}/orders`, {
@@ -287,78 +379,25 @@ document
       const data = await response.json();
 
       if (data.success) {
-        messageEl.textContent = `✅ ${data.message}! Orden #${data.ordenId}. Total: $${data.total}. Se envió la nota de compra a tu correo.`;
-        messageEl.style.color = "green";
-
-        document.getElementById("checkoutForm").reset();
-        document.getElementById("costPreview").innerHTML =
-          "<p><em>Compra finalizada exitosamente</em></p>";
-
-        setTimeout(() => {
+        Swal.fire({
+          icon: "success",
+          title: "¡Compra Exitosa!",
+          html: `
+          <p>Orden #${data.ordenId}</p>
+          <p><strong>Total: $${data.total}</strong></p>
+          <p>Se envió la nota de compra a tu correo.</p>
+        `,
+          background: "#1a2038",
+          color: "#e0e7ff",
+          confirmButtonColor: "#00d4ff",
+        }).then(() => {
           window.location.href = "index.html";
-        }, 3000);
+        });
       } else {
-        messageEl.textContent = "❌ " + data.message;
-        messageEl.style.color = "red";
+        alertError(data.message, "Error en la Compra");
       }
     } catch (error) {
-      console.error("Error completo:", error);
-      messageEl.textContent = "❌ Error: " + error.message;
-      messageEl.style.color = "red";
+      console.error("Error:", error);
+      alertError(error.message, "Error de Conexión");
     }
   });
-
-// ============================================
-// MOSTRAR CAMPOS SEGÚN MÉTODO DE PAGO
-// ============================================
-
-const paymentFields = document.getElementById("paymentFields");
-
-const renderPaymentFields = (metodo) => {
-  if (metodo === "tarjeta") {
-    paymentFields.innerHTML = `
-      <h4>Pago con Tarjeta</h4>
-      <label>Número de tarjeta</label><br>
-      <input type="text" id="numeroTarjeta" placeholder="XXXX-XXXX-XXXX-XXXX" required><br><br>
-
-      <label>Fecha de expiración</label><br>
-      <input type="text" id="expiracion" placeholder="MM/AA" class="small-input" required><br><br>
-
-      <label>CVV</label><br>
-      <input type="text" id="cvv" placeholder="123" class="small-input" required><br>
-    `;
-  }
-
-  if (metodo === "transferencia") {
-    paymentFields.innerHTML = `
-      <h4>Transferencia Bancaria</h4>
-      <p><strong>Banco:</strong> BBVA</p>
-      <p><strong>Cuenta:</strong> 0123456789</p>
-      <p><strong>CLABE:</strong> 123456789012345678</p>
-      <p>Una vez hecha la transferencia, tu orden se procesará automáticamente.</p>
-    `;
-  }
-
-  if (metodo === "oxxo") {
-    const referencia = Math.floor(Math.random() * 900000000000) + 100000000000;
-
-    paymentFields.innerHTML = `
-      <h4>Pago en OXXO</h4>
-      <p>Lleva esta referencia a cualquier tienda OXXO:</p>
-      <p style="font-size:20px; font-weight:bold;">
-        ${referencia}
-      </p>
-      <p>Tu orden se confirmará cuando realices el pago.</p>
-    `;
-  }
-};
-
-// Detectar cambio de método de pago
-document.querySelectorAll('input[name="metodoPago"]').forEach((radio) => {
-  radio.addEventListener("change", (e) => {
-    renderPaymentFields(e.target.value);
-  });
-});
-
-// Inicialización por defecto (tarjeta)
-renderPaymentFields("tarjeta");
