@@ -80,9 +80,32 @@ class AccessibilityManager {
 
   updateThemeIcon(theme) {
     const themeBtn = document.getElementById("themeToggle");
-    if (themeBtn) {
-      themeBtn.textContent = theme === "dark" ? "🌙" : "☀️";
-      themeBtn.title = theme === "dark" ? "Modo Claro" : "Modo Oscuro";
+    if (!themeBtn) return;
+
+    if (theme === "dark") {
+      // 🌙 Modo oscuro → mostrar luna
+      themeBtn.innerHTML = `
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M21.64 13a1 1 0 0 0-1.05-.14 8 8 0 0 1-10.45-10.5A1 1 0 0 0 9 1a10 10 0 1 0 12.64 12z"/>
+      </svg>
+    `;
+      themeBtn.title = "Modo Claro";
+    } else {
+      // ☀️ Modo claro → mostrar sol con rayos (tu SVG)
+      themeBtn.innerHTML = `
+      <svg width="26" height="26" viewBox="0 0 30 30" fill="currentColor">
+        <circle cx="15" cy="15" r="6" />
+        <line id="ray" stroke="currentColor" stroke-width="2" stroke-linecap="round" x1="15" y1="1" x2="15" y2="4"></line>
+        <use href="#ray" transform="rotate(45 15 15)" />
+        <use href="#ray" transform="rotate(90 15 15)" />
+        <use href="#ray" transform="rotate(135 15 15)" />
+        <use href="#ray" transform="rotate(180 15 15)" />
+        <use href="#ray" transform="rotate(225 15 15)" />
+        <use href="#ray" transform="rotate(270 15 15)" />
+        <use href="#ray" transform="rotate(315 15 15)" />
+      </svg>
+    `;
+      themeBtn.title = "Modo Oscuro";
     }
   }
 

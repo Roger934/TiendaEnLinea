@@ -23,10 +23,23 @@ const generateOrderPDF = (orderData) => {
       doc.pipe(stream);
 
       // ============================================
-      // ENCABEZADO
+      // ENCABEZADO CON LOGO
       // ============================================
+
+      const logoPath = path.join(__dirname, "../assets/logo.png");
+
+      try {
+        if (fs.existsSync(logoPath)) {
+          doc.image(logoPath, (doc.page.width - 80) / 2, 40, { width: 80 });
+        }
+      } catch (err) {
+        console.error("No se pudo cargar el logo:", err.message);
+      }
+
+      doc.moveDown(6);
+
       doc.fontSize(20).text("TechStore", { align: "center" });
-      doc.fontSize(12).text("Tienda de Componentes de PC", { align: "center" });
+      doc.fontSize(12).text("Potencia tu PC", { align: "center" });
       doc.moveDown();
 
       doc

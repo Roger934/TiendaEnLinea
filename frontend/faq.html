@@ -3,19 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Registro - TechStore</title>
+    <title>Preguntas Frecuentes - TechStore</title>
     <link rel="stylesheet" href="css/styles.css" />
+
     <!-- SweetAlert2 -->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
     />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <!-- Alerts personalizados -->
     <script src="js/alerts.js"></script>
   </head>
-
   <body>
     <!-- ============================================ -->
     <!-- HEADER -->
@@ -96,67 +94,158 @@
         </div>
       </div>
     </header>
-    <!-- ============================================ -->
+
     <!-- MAIN -->
-    <!-- ============================================ -->
     <main>
       <div class="container">
-        <div class="auth-card">
-          <h2 class="auth-title">Crear Cuenta</h2>
+        <h2>Preguntas Frecuentes</h2>
 
-          <form id="registerForm" class="auth-form">
-            <div class="form-group">
-              <label>Nombre:</label>
-              <input type="text" id="nombre" required />
+        <div class="faq-container">
+          <!-- Pregunta 1 -->
+          <div class="faq-item">
+            <div class="faq-question">
+              <span>¿Cómo realizo una compra?</span>
+              <span class="faq-icon">+</span>
             </div>
-
-            <div class="form-group">
-              <label>Email:</label>
-              <input type="email" id="email" required />
+            <div class="faq-answer">
+              <p>Para realizar una compra debes:</p>
+              <ol>
+                <li>Registrarte o iniciar sesión</li>
+                <li>Agregar productos al carrito</li>
+                <li>Proceder al checkout</li>
+                <li>Completar datos de envío y pago</li>
+              </ol>
             </div>
+          </div>
 
-            <div class="form-group">
-              <label>Contraseña:</label>
-              <input type="password" id="password" required />
+          <!-- Pregunta 2 -->
+          <div class="faq-item">
+            <div class="faq-question">
+              <span>¿Qué métodos de pago aceptan?</span>
+              <span class="faq-icon">+</span>
             </div>
-
-            <div class="form-group">
-              <label>Confirmar Contraseña:</label>
-              <input type="password" id="password2" required />
+            <div class="faq-answer">
+              <p>Aceptamos:</p>
+              <ul>
+                <li>💳 Tarjeta de crédito/débito</li>
+                <li>🏦 Transferencia bancaria</li>
+                <li>🏪 Pago en Oxxo</li>
+              </ul>
             </div>
+          </div>
 
-            <button type="submit" class="btn-primary w-100">Registrarse</button>
-          </form>
+          <!-- Pregunta 3 -->
+          <div class="faq-item">
+            <div class="faq-question">
+              <span>¿Tienen envíos internacionales?</span>
+              <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+              <p>
+                Sí, enviamos a: México, Estados Unidos, España, Canadá,
+                Argentina, Colombia, Chile y Perú.
+              </p>
+            </div>
+          </div>
 
-          <p id="message" class="auth-message"></p>
+          <!-- Pregunta 4 -->
+          <div class="faq-item">
+            <div class="faq-question">
+              <span>¿Cómo uso un cupón de descuento?</span>
+              <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+              <p>
+                Durante el checkout, ingresa tu código en el campo de cupón.
+              </p>
+              <p>
+                <strong>Cupón activo:</strong>
+                <span style="color: var(--accent-blue)">BIENVENIDO10</span> (10%
+                descuento)
+              </p>
+            </div>
+          </div>
 
-          <p class="auth-links">
-            ¿Ya tienes cuenta?
-            <a href="login.html">Inicia sesión</a>
-          </p>
+          <!-- Pregunta 5 -->
+          <div class="faq-item">
+            <div class="faq-question">
+              <span>¿Qué hago si olvidé mi contraseña?</span>
+              <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+              <p>
+                En el login, haz clic en "¿Olvidaste tu contraseña?" e ingresa
+                tu email. Recibirás un enlace para restablecerla.
+              </p>
+            </div>
+          </div>
+
+          <!-- Pregunta 6 -->
+          <div class="faq-item">
+            <div class="faq-question">
+              <span>¿Los productos tienen garantía?</span>
+              <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+              <p>Todos nuestros productos tienen garantía del fabricante:</p>
+              <ul>
+                <li>Procesadores y RAM: 3 años</li>
+                <li>Tarjetas gráficas: 2 años</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Pregunta 7 -->
+          <div class="faq-item">
+            <div class="faq-question">
+              <span>¿Puedo cancelar mi pedido?</span>
+              <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+              <p>
+                Puedes cancelar dentro de las primeras 24 horas. Contáctanos con
+                tu número de orden.
+              </p>
+            </div>
+          </div>
+
+          <!-- Pregunta 8 -->
+          <div class="faq-item">
+            <div class="faq-question">
+              <span>¿Cómo contacto con soporte?</span>
+              <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+              <p>Puedes contactarnos a través de:</p>
+              <ul>
+                <li><a href="contact.html">Formulario de contacto</a></li>
+                <li>
+                  Instagram:
+                  <a href="https://instagram.com/TU_USUARIO" target="_blank"
+                    >@techstore</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </main>
 
-    <!-- ============================================ -->
     <!-- FOOTER -->
-    <!-- ============================================ -->
     <footer>
       <div class="container">
         <div class="footer-content">
-          <!-- Brand -->
           <div class="footer-brand">
             <h2>TechStore</h2>
             <p>Potencia tu PC con los mejores componentes</p>
           </div>
 
-          <!-- Links -->
           <div class="footer-links">
             <a href="faq.html">FAQ</a>
             <a href="nosotros.html">Nosotros</a>
             <a href="contact.html">Contacto</a>
           </div>
-
           <!-- Redes Sociales -->
           <div class="footer-social">
             <a
@@ -181,19 +270,15 @@
             </a>
           </div>
 
-          <!-- Copyright -->
           <div class="footer-copyright">
-            <p>
-              © 2025 TechStore | Proyecto Académico - Programación de Sistemas
-              Web
-            </p>
+            <p>© 2025 TechStore | Proyecto Académico</p>
           </div>
         </div>
       </div>
     </footer>
 
-    <!-- Scripts -->
     <script src="js/accessibility.js"></script>
-    <script src="js/register.js"></script>
+    <script src="js/faq.js"></script>
+    <script src="js/header.js"></script>
   </body>
 </html>

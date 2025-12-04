@@ -10,31 +10,47 @@ let subtotalGlobal = 0;
 // ============================================
 window.addEventListener("DOMContentLoaded", async () => {
   if (!token) {
-    alertError("Debes iniciar sesión para continuar", "Sesión Requerida");
-    setTimeout(() => {
+    Swal.fire({
+      icon: "error",
+      title: "Sesión Requerida",
+      text: "Debes iniciar sesión para continuar",
+      background: "#1a2038",
+      color: "#e0e7ff",
+      confirmButtonColor: "#ff006e",
+    }).then(() => {
       window.location.href = "login.html";
-    }, 2000);
+    });
     return;
   }
 
   // Actualizar header
   const user = JSON.parse(localStorage.getItem("user") || "{}");
-  if (user.nombre) {
-    document.getElementById("userName").textContent = user.nombre;
-    document.getElementById("userName").style.display = "flex";
-    document.getElementById("logoutBtn").style.display = "block";
-  }
 
-  // Mostrar Admin link si es admin
-  const adminLink = document.getElementById("adminLink");
-  if (adminLink && user.rol === "admin") {
-    adminLink.style.display = "inline-block";
+  if (user.nombre) {
+    const userNameEl = document.getElementById("userName");
+    const loginLink = document.getElementById("loginLink");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const adminLink = document.getElementById("adminLink");
+
+    // Mostrar nombre y logout
+    if (userNameEl) {
+      userNameEl.textContent = user.nombre;
+      userNameEl.style.display = "flex";
+    }
+
+    if (loginLink) loginLink.style.display = "none";
+    if (logoutBtn) logoutBtn.style.display = "block";
+
+    // Mostrar Admin si es admin
+    if (adminLink && user.rol === "admin") {
+      adminLink.style.display = "inline-block";
+    }
   }
 
   await loadCartSummary();
   setupCountryChangeListener();
   setupPaymentMethodListener();
-  renderPaymentFields("tarjeta"); // Inicializar con tarjeta
+  renderPaymentFields("tarjeta");
 });
 
 // ============================================
@@ -163,8 +179,14 @@ const mostrarPreviewCostos = (pais) => {
   const container = document.getElementById("costPreview");
 
   if (!pais) {
-    container.innerHTML =
-      "<p><em>Selecciona un país para ver el desglose</em></p>";
+    Swal.fire({
+      icon: "error",
+      title: "Campo Requerido",
+      text: "Debes seleccionar un país",
+      background: "#1a2038",
+      color: "#e0e7ff",
+      confirmButtonColor: "#ff006e",
+    });
     return;
   }
 
@@ -300,6 +322,9 @@ const setupPaymentMethodListener = () => {
 // ============================================
 // PROCESAR ORDEN
 // ============================================
+// ============================================
+// PROCESAR ORDEN
+// ============================================
 document
   .getElementById("checkoutForm")
   .addEventListener("submit", async (e) => {
@@ -316,7 +341,14 @@ document
     const codigoCupon = document.getElementById("codigoCupon").value;
 
     if (!pais) {
-      alertError("Debes seleccionar un país", "Campo Requerido");
+      Swal.fire({
+        icon: "error",
+        title: "Campo Requerido",
+        text: "Debes seleccionar un país",
+        background: "#1a2038",
+        color: "#e0e7ff",
+        confirmButtonColor: "#ff006e",
+      });
       return;
     }
 
@@ -329,7 +361,14 @@ document
       const cvv = document.getElementById("cvv")?.value;
 
       if (!numeroTarjeta || !expiracion || !cvv) {
-        alertError("Completa los datos de la tarjeta", "Datos Incompletos");
+        Swal.fire({
+          icon: "error",
+          title: "Datos Incompletos",
+          text: "Completa los datos de la tarjeta",
+          background: "#1a2038",
+          color: "#e0e7ff",
+          confirmButtonColor: "#ff006e",
+        });
         return;
       }
 
@@ -379,25 +418,47 @@ document
       const data = await response.json();
 
       if (data.success) {
+        Swal.close(); // Cerrar loading
+
         Swal.fire({
           icon: "success",
           title: "¡Compra Exitosa!",
           html: `
-          <p>Orden #${data.ordenId}</p>
-          <p><strong>Total: $${data.total}</strong></p>
-          <p>Se envió la nota de compra a tu correo.</p>
-        `,
+            <p>Orden #${data.ordenId}</p>
+            <p><strong>Total: $${data.total}</strong></p>
+            <p>Se envió la nota de compra a tu correo.</p>
+          `,
           background: "#1a2038",
           color: "#e0e7ff",
+          confirmButtonText: "Ir al inicio",
           confirmButtonColor: "#00d4ff",
         }).then(() => {
           window.location.href = "index.html";
         });
       } else {
-        alertError(data.message, "Error en la Compra");
+        Swal.close();
+
+        Swal.fire({
+          icon: "error",
+          title: "Error en la Compra",
+          text: data.message,
+          background: "#1a2038",
+          color: "#e0e7ff",
+          confirmButtonColor: "#ff006e",
+        });
       }
     } catch (error) {
       console.error("Error:", error);
-      alertError(error.message, "Error de Conexión");
+
+      Swal.close();
+
+      Swal.fire({
+        icon: "error",
+        title: "Error de Conexión",
+        text: error.message,
+        background: "#1a2038",
+        color: "#e0e7ff",
+        confirmButtonColor: "#ff006e",
+      });
     }
   });
