@@ -153,6 +153,13 @@ document.getElementById("productForm").addEventListener("submit", async (e) => {
       document.getElementById("submitBtn").textContent = "Crear Producto";
       document.getElementById("cancelBtn").style.display = "none";
 
+      // ============================================
+      // LIMPIAR UPLOAD Y PREVIEW (AGREGA ESTO)
+      // ============================================
+      document.getElementById("imageFile").value = "";
+      document.getElementById("uploadMessage").textContent = "";
+      document.getElementById("imagePreview").innerHTML = "";
+
       // Recargar lista
       loadProducts();
     } else {
@@ -193,6 +200,19 @@ const editProduct = async (id) => {
 
       editingProductId = id;
 
+      // ============================================
+      // LIMPIAR UPLOAD Y PREVIEW (AGREGA ESTO)
+      // ============================================
+      document.getElementById("imageFile").value = ""; // Limpiar input file
+      document.getElementById("uploadMessage").textContent = ""; // Limpiar mensaje
+
+      // Mostrar imagen actual
+      document.getElementById("imagePreview").innerHTML = `
+        <p><strong>Imagen actual:</strong></p>
+        <img src="${p.imagen_url}" style="width: 200px; height: 200px; object-fit: cover; margin-top: 10px;">
+        <p><em>Sube una nueva imagen si deseas cambiarla</em></p>
+      `;
+
       // Scroll al formulario
       window.scrollTo(0, 0);
     }
@@ -211,6 +231,13 @@ document.getElementById("cancelBtn").addEventListener("click", () => {
   document.getElementById("submitBtn").textContent = "Crear Producto";
   document.getElementById("cancelBtn").style.display = "none";
   document.getElementById("formMessage").textContent = "";
+
+  // ============================================
+  // LIMPIAR UPLOAD Y PREVIEW (AGREGA ESTO)
+  // ============================================
+  document.getElementById("imageFile").value = "";
+  document.getElementById("uploadMessage").textContent = "";
+  document.getElementById("imagePreview").innerHTML = "";
 });
 
 // ============================================
@@ -406,5 +433,58 @@ document
     } catch (error) {
       document.getElementById("inventoryData").innerHTML =
         "<p>Error al cargar inventario</p>";
+    }
+  });
+
+// ============================================
+// SUBIR IMAGEN (CREAR PRODUCTO)
+// ============================================
+document
+  .getElementById("uploadImageBtn")
+  .addEventListener("click", async () => {
+    const fileInput = document.getElementById("imageFile");
+    const file = fileInput.files[0];
+    const messageEl = document.getElementById("uploadMessage");
+    const previewEl = document.getElementById("imagePreview");
+
+    if (!file) {
+      messageEl.textContent = "⚠️ Selecciona una imagen primero";
+      messageEl.style.color = "orange";
+      return;
+    }
+
+    messageEl.textContent = "Subiendo imagen...";
+    messageEl.style.color = "blue";
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const response = await fetch(`${API_URL}/admin/upload-image`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        messageEl.textContent = "✅ Imagen subida exitosamente";
+        messageEl.style.color = "green";
+
+        // Guardar URL en campo oculto
+        document.getElementById("imagen_url").value = data.imageUrl;
+
+        // Mostrar preview
+        previewEl.innerHTML = `<img src="${data.imageUrl}" style="width: 200px; height: 200px; object-fit: cover; margin-top: 10px;">`;
+      } else {
+        messageEl.textContent = "❌ " + data.message;
+        messageEl.style.color = "red";
+      }
+    } catch (error) {
+      messageEl.textContent = "❌ Error: " + error.message;
+      messageEl.style.color = "red";
     }
   });

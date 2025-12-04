@@ -3,7 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Panel de Administración</title>
+    <title>Panel de Administración - TechStore</title>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body>
     <h1>Panel de Administración - TechStore</h1>
@@ -43,13 +45,16 @@
       <label>Precio:</label><br />
       <input type="number" id="precio" step="0.01" required /><br /><br />
 
-      <label>URL de Imagen:</label><br />
-      <input
-        type="text"
-        id="imagen_url"
-        placeholder="/images/producto.jpg"
-        style="width: 400px"
-      /><br /><br />
+      <!-- SUBIR IMAGEN A CLOUDINARY -->
+      <label>Imagen del Producto:</label><br />
+      <input type="file" id="imageFile" accept="image/*" /><br />
+      <button type="button" id="uploadImageBtn" style="margin-top: 10px">
+        📤 Subir Imagen a Cloudinary
+      </button>
+      <p id="uploadMessage" style="margin: 10px 0"></p>
+      <input type="hidden" id="imagen_url" />
+      <div id="imagePreview"></div>
+      <br />
 
       <label>Stock:</label><br />
       <input type="number" id="stock" required /><br /><br />
@@ -119,7 +124,5 @@
     <div id="inventoryData"></div>
 
     <script src="js/admin.js"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </body>
 </html>
