@@ -1,7 +1,6 @@
 // frontend/js/subscription.js
 
-// API_URL ya está declarado en products.js
-// const API_URL = "http://localhost:3000/api";
+const API_URL = "https://tiendaenlinea-eqmj.onrender.com/api";
 
 document
   .getElementById("subscriptionForm")
