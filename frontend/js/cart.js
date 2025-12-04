@@ -146,7 +146,7 @@ const displayCartFromDB = (items, subtotal) => {
   if (!items.length) {
     container.innerHTML = `
       <div class="empty-cart">
-        <h3>Tu carrito está vacío 🛒</h3>
+        <h3>Tu carrito está vacío</h3>
         <p>Agrega productos desde nuestro catálogo</p>
         <a href="index.html" class="btn-primary" style="margin-top: 1rem;">Ver Productos</a>
       </div>

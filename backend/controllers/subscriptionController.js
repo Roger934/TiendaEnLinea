@@ -38,51 +38,44 @@ const subscribe = async (req, res) => {
     // ENVIAR EMAIL DE BIENVENIDA CON CUPÓN
     // ============================================
     const htmlContent = `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-                <div style="text-align: center; margin-bottom: 30px;">
-                    <h1 style="color: #333; margin: 0;">TechStore</h1>
-                    <p style="color: #666; margin: 5px 0;">Potencia tu PC</p>
-                </div>
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0a0e27; color: #e0e7ff; border-radius: 12px; overflow: hidden;">
+        
+        <!-- HEADER CON LOGO -->
+        <div style="background: linear-gradient(135deg, #00d4ff, #b537f2); padding: 2rem; text-align: center;">
+            <img src="https://res.cloudinary.com/dg2hxfe8i/image/upload/v1764878695/processor_e1t5jt.png" 
+                 alt="TechStore Logo" 
+                 style="width: 80px; height: 80px; margin-bottom: 1rem;">
+            <h1 style="color: white; margin: 0; font-size: 2rem;">TechStore</h1>
+            <p style="color: white; margin: 0.5rem 0 0 0;">Potencia tu PC</p>
+        </div>
 
-                <h2 style="color: #333;">¡Bienvenido a TechStore! 🎉</h2>
-                
-                <p style="color: #555; line-height: 1.6;">
-                    ¡Hola!
-                </p>
-                
-                <p style="color: #555; line-height: 1.6;">
-                    Gracias por suscribirte a TechStore. Estamos emocionados de tenerte con nosotros.
-                </p>
-                
-                <p style="color: #555; line-height: 1.6;">
-                    Como agradecimiento, aquí está tu cupón de bienvenida:
-                </p>
+        <!-- CONTENIDO -->
+        <div style="padding: 2rem;">
+            <h2 style="color: #00d4ff;">¡Gracias por suscribirte!</h2>
+            
+            <p style="color: #e0e7ff; line-height: 1.6;">
+                Usa este cupón en tu próxima compra:
+            </p>
 
-                <div style="background-color: #f5f5f5; border: 2px dashed #333; padding: 20px; text-align: center; margin: 30px 0;">
-                    <p style="margin: 0; font-size: 14px; color: #666;">CÓDIGO DE DESCUENTO</p>
-                    <p style="margin: 10px 0; font-size: 32px; font-weight: bold; color: #333; letter-spacing: 3px;">NUEVO2025</p>
-                    <p style="margin: 0; font-size: 18px; color: #333;">15% de descuento</p>
-                    <p style="margin: 10px 0 0 0; font-size: 14px; color: #666;">Válido en tu primera compra</p>
-                </div>
-
-                <p style="color: #555; line-height: 1.6;">
-                    Visita nuestra tienda y encuentra los mejores componentes para tu PC: procesadores, memorias RAM y tarjetas gráficas de última generación.
-                </p>
-
-                <div style="text-align: center; margin: 40px 0;">
-                    <p style="color: #666; margin: 0;">
-                        <strong>TechStore</strong><br>
-                        Potencia tu PC
-                    </p>
-                </div>
-
-                <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
-
-                <p style="color: #999; font-size: 12px; text-align: center;">
-                    Este es un correo automático de TechStore | Proyecto Académico 2025
-                </p>
+            <div style="background: #1a2038; border: 2px solid #00d4ff; border-radius: 8px; padding: 1.5rem; text-align: center; margin: 1.5rem 0;">
+                <span style="font-size: 2rem; font-weight: bold; color: #00d4ff; letter-spacing: 2px;">
+                    BIENVENIDO10
+                </span>
             </div>
-        `;
+
+            <p style="color: #888; text-align: center; margin: 0;">
+                10% de descuento en tu primera compra
+            </p>
+        </div>
+
+        <!-- FOOTER -->
+        <div style="background: #151b3d; padding: 1.5rem; text-align: center;">
+            <p style="color: #666; font-size: 12px; margin: 0;">
+                © 2025 TechStore | Proyecto Académico
+            </p>
+        </div>
+    </div>
+`;
 
     await sendSimpleEmail(email, "¡Bienvenido a TechStore! 🎉", htmlContent);
 
