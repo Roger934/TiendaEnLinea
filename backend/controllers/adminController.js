@@ -239,6 +239,37 @@ const getInventory = async (req, res) => {
   }
 };
 
+// ============================================
+// SUBIR IMAGEN A CLOUDINARY
+// ============================================
+const uploadImage = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "No se recibió ninguna imagen",
+      });
+    }
+
+    // Cloudinary ya subió la imagen automáticamente
+    // req.file.path contiene la URL de Cloudinary
+
+    res.json({
+      success: true,
+      message: "Imagen subida exitosamente",
+      imageUrl: req.file.path,
+      publicId: req.file.filename,
+    });
+  } catch (error) {
+    console.error("Error en uploadImage:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error al subir imagen",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   createProduct,
   updateProduct,
@@ -246,4 +277,5 @@ module.exports = {
   getTotalSales,
   getSalesChart,
   getInventory,
+  uploadImage,
 };

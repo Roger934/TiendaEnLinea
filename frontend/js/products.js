@@ -63,7 +63,7 @@ const loadProducts = async (filters = {}) => {
 // ============================================
 const displayProducts = (productos) => {
   const container = document.getElementById("productosContainer");
-  const token = localStorage.getItem("token"); // ← Verificar login
+  const token = localStorage.getItem("token");
 
   if (productos.length === 0) {
     container.innerHTML = "<p>No se encontraron productos</p>";
@@ -77,30 +77,32 @@ const displayProducts = (productos) => {
     const precioFormateado = `$${parseFloat(producto.precio).toFixed(2)}`;
 
     html += `
-            <div style="border: 1px solid black; padding: 10px; margin: 10px 0;">
-                <h3>${producto.nombre}</h3>
-                <p><strong>Categoría:</strong> ${producto.categoria_nombre}</p>
-                <p><strong>Precio:</strong> ${precioFormateado} ${
+      <div style="border: 1px solid black; padding: 10px; margin: 10px 0;">
+        <img src="${producto.imagen_url}" alt="${producto.nombre}" 
+             style="width: 200px; height: 200px; object-fit: cover;">
+        <h3>${producto.nombre}</h3>
+        <p><strong>Categoría:</strong> ${producto.categoria_nombre}</p>
+        <p><strong>Precio:</strong> ${precioFormateado} ${
       producto.en_oferta ? "🔥 EN OFERTA" : ""
     }</p>
-                <p><strong>Descripción:</strong> ${producto.descripcion}</p>
-                <p><strong>Stock:</strong> ${
-                  disponible ? producto.stock + " disponibles" : "No disponible"
-                }</p>
-                
-                ${
-                  disponible
-                    ? token
-                      ? `<button onclick="addToCart(${producto.id}, '${
-                          producto.nombre
-                        }', ${parseFloat(
-                          producto.precio
-                        )})">Agregar al carrito</button>`
-                      : `<button onclick="promptLogin()">Agregar al carrito</button>`
-                    : '<p style="color: red;">Producto no disponible</p>'
-                }
-            </div>
-        `;
+        <p><strong>Descripción:</strong> ${producto.descripcion}</p>
+        <p><strong>Stock:</strong> ${
+          disponible ? producto.stock + " disponibles" : "No disponible"
+        }</p>
+        
+        ${
+          disponible
+            ? token
+              ? `<button onclick="addToCart(${producto.id}, '${
+                  producto.nombre
+                }', ${parseFloat(
+                  producto.precio
+                )})">Agregar al carrito</button>`
+              : `<button onclick="promptLogin()">Agregar al carrito</button>`
+            : '<p style="color: red;">Producto no disponible</p>'
+        }
+      </div>
+    `;
   });
 
   container.innerHTML = html;
