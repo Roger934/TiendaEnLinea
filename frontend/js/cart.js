@@ -1,6 +1,6 @@
 // frontend/js/cart.js
 
-const API_URL = "http://localhost:3000/api";
+const API_URL = "https://tiendaenlinea-eqmj.onrender.com/api";
 const token = localStorage.getItem("token");
 
 // ============================================

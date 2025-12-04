@@ -1,6 +1,6 @@
 // frontend/js/reset-password.js
 
-const API_URL = "http://localhost:3000/api";
+const API_URL = "https://tiendaenlinea-eqmj.onrender.com/api";
 
 // Obtener token de la URL
 const urlParams = new URLSearchParams(window.location.search);
