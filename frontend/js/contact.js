@@ -1,5 +1,7 @@
 // frontend/js/contact.js
 
+const API_URL = "https://tiendaenlinea-eqmj.onrender.com/api";
+
 document.getElementById("contactForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -17,7 +19,7 @@ document.getElementById("contactForm").addEventListener("submit", async (e) => {
   });
 
   try {
-    const response = await fetch("http://localhost:3000/api/contact", {
+    const response = await fetch(`${API_URL}/contact`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

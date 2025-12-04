@@ -1,4 +1,6 @@
 // frontend/js/nosotros.js
+const API_URL = "https://tiendaenlinea-eqmj.onrender.com/api";
+
 document.addEventListener("DOMContentLoaded", () => {
   // ============================================
   // ACTUALIZAR HEADER (login / logout / nombre)
@@ -70,7 +72,7 @@ const updateCartCount = () => {
     const total = localCart.reduce((sum, item) => sum + item.cantidad, 0);
     if (cartCount) cartCount.textContent = total;
   } else {
-    fetch("http://localhost:3000/api/cart", {
+    fetch(`${API_URL}/cart`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())

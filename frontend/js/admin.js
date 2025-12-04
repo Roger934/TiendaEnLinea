@@ -1,6 +1,6 @@
 // frontend/js/admin.js
 
-const API_URL = "http://localhost:3000/api";
+const API_URL = "https://tiendaenlinea-eqmj.onrender.com/api";
 let token = "";
 let editingProductId = null;
 

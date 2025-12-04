@@ -1,6 +1,8 @@
 // frontend/js/faq.js
 // Accordion para FAQ
 
+const API_URL = "https://tiendaenlinea-eqmj.onrender.com/api";
+
 document.addEventListener("DOMContentLoaded", () => {
   // ============================================
   // ACTUALIZAR HEADER (login / logout / nombre)
@@ -74,7 +76,7 @@ const updateCartCount = () => {
     if (cartCount) cartCount.textContent = total;
   } else {
     // Usuario logueado: obtener del backend
-    fetch("http://localhost:3000/api/cart", {
+    fetch(`${API_URL}/cart`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
