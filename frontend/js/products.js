@@ -3,18 +3,21 @@
 const API_URL = "http://localhost:3000/api";
 
 // ============================================
-// VERIFICAR SI HAY USUARIO LOGUEADO
+// VERIFICAR SI HAY USUARIO LOGUEADO Y CARGAR PRODUCTOS
 // ============================================
 window.addEventListener("DOMContentLoaded", () => {
   const token = localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-  if (token && user) {
-    document.getElementById("userName").textContent = `Hola, ${user.nombre}`;
-    document.getElementById("logoutBtn").style.display = "inline-block";
+  // Actualizar header si está logueado
+  if (token && user.nombre) {
+    document.getElementById("userName").textContent = user.nombre;
+    document.getElementById("userName").style.display = "flex";
+    document.getElementById("loginLink").style.display = "none";
+    document.getElementById("logoutBtn").style.display = "block";
   }
 
-  // Cargar productos al inicio
+  // IMPORTANTE: Cargar productos al inicio
   loadProducts();
   updateCartCount();
 });
@@ -22,12 +25,12 @@ window.addEventListener("DOMContentLoaded", () => {
 // ============================================
 // LOGOUT
 // ============================================
-document.getElementById("logoutBtn").addEventListener("click", () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
+document.getElementById("logoutBtn")?.addEventListener("click", () => {
+  localStorage.clear();
   window.location.reload();
 });
 
+// ... resto del código (loadProducts, displayProducts, etc)
 // ============================================
 // CARGAR PRODUCTOS
 // ============================================
@@ -77,29 +80,37 @@ const displayProducts = (productos) => {
     const precioFormateado = `$${parseFloat(producto.precio).toFixed(2)}`;
 
     html += `
-      <div style="border: 1px solid black; padding: 10px; margin: 10px 0;">
-        <img src="${producto.imagen_url}" alt="${producto.nombre}" 
-             style="width: 200px; height: 200px; object-fit: cover;">
-        <h3>${producto.nombre}</h3>
-        <p><strong>Categoría:</strong> ${producto.categoria_nombre}</p>
-        <p><strong>Precio:</strong> ${precioFormateado} ${
-      producto.en_oferta ? "🔥 EN OFERTA" : ""
-    }</p>
-        <p><strong>Descripción:</strong> ${producto.descripcion}</p>
-        <p><strong>Stock:</strong> ${
-          disponible ? producto.stock + " disponibles" : "No disponible"
-        }</p>
+      <div class="product-card">
+        ${
+          producto.en_oferta
+            ? '<span class="product-badge">🔥 OFERTA</span>'
+            : ""
+        }
+        
+        <img src="${producto.imagen_url}" alt="${
+      producto.nombre
+    }" class="product-image">
+        
+        <p class="product-category">${producto.categoria_nombre}</p>
+        <h3 class="product-title">${producto.nombre}</h3>
+        <p class="product-description">${producto.descripcion}</p>
+        <p class="product-price">${precioFormateado}</p>
+        <p class="product-stock ${!disponible ? "out-of-stock" : ""}">
+          ${
+            disponible ? `✅ ${producto.stock} disponibles` : "❌ No disponible"
+          }
+        </p>
         
         ${
           disponible
             ? token
-              ? `<button onclick="addToCart(${producto.id}, '${
-                  producto.nombre
-                }', ${parseFloat(
+              ? `<button class="btn-primary" onclick="addToCart(${
+                  producto.id
+                }, '${producto.nombre}', ${parseFloat(
                   producto.precio
-                )})">Agregar al carrito</button>`
-              : `<button onclick="promptLogin()">Agregar al carrito</button>`
-            : '<p style="color: red;">Producto no disponible</p>'
+                )})">Agregar al carrito 🛒</button>`
+              : `<button class="btn-primary" onclick="promptLogin()">Agregar al carrito 🛒</button>`
+            : '<button class="btn-secondary" disabled>No disponible</button>'
         }
       </div>
     `;
@@ -187,33 +198,30 @@ const addToCartDB = async (producto_id) => {
 // ============================================
 const updateCartCount = async () => {
   const token = localStorage.getItem("token");
-  let totalItems = 0;
 
-  if (token) {
-    // Usuario logueado - Contar desde BD
-    try {
-      const response = await fetch(`${API_URL}/cart`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        data.items.forEach((item) => {
-          totalItems += item.cantidad;
-        });
-      }
-    } catch (error) {
-      console.error("Error al obtener carrito:", error);
-    }
+  if (!token) {
+    document.getElementById("cartCount").textContent = "0";
+    return;
   }
-  // Si NO hay token, totalItems se queda en 0
 
-  const cartCountEl = document.getElementById("cartCount");
-  if (cartCountEl) {
-    cartCountEl.textContent = totalItems;
+  try {
+    const response = await fetch(`${API_URL}/cart`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      const totalItems = data.items.reduce(
+        (sum, item) => sum + item.cantidad,
+        0
+      );
+      document.getElementById("cartCount").textContent = totalItems;
+    }
+  } catch (error) {
+    console.error("Error al actualizar carrito:", error);
   }
 };
 
