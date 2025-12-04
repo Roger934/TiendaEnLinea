@@ -3,17 +3,116 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home</title>
+    <title>Bienvenido - TechStore</title>
+
+    <link rel="stylesheet" href="css/styles.css" />
   </head>
+
   <body>
-    <h1>Bienvenido</h1>
+    <!-- ============================================ -->
+    <!-- HEADER -->
+    <!-- ============================================ -->
+    <header>
+      <div class="container">
+        <div class="header-content">
+          <!-- Logo -->
+          <a href="index.html" class="logo">
+            <img
+              src="https://img.icons8.com/nolan/64/processor.png"
+              alt="TechStore Logo"
+            />
+            <div class="logo-text">
+              <h1>TechStore</h1>
+              <p>Potencia tu PC</p>
+            </div>
+          </a>
 
-    <div id="userInfo">
-      <p>Cargando...</p>
-    </div>
+          <!-- User Info -->
+          <div class="user-info">
+            <!-- Carrito -->
+            <a href="cart.html" class="cart-icon-btn">
+              🛒
+              <span id="cartCount" class="cart-count">0</span>
+            </a>
 
-    <button id="logoutBtn">Cerrar Sesión</button>
+            <!-- Nombre -->
+            <span id="userName" class="user-name" style="display: none"></span>
 
+            <!-- Accesibilidad -->
+            <div class="accessibility-controls">
+              <button id="themeToggle" class="icon-btn" title="Cambiar tema">
+                🌙
+              </button>
+              <button
+                id="increaseFontBtn"
+                class="icon-btn"
+                title="Aumentar texto"
+              >
+                A⁺
+              </button>
+              <button
+                id="decreaseFontBtn"
+                class="icon-btn"
+                title="Reducir texto"
+              >
+                A⁻
+              </button>
+            </div>
+
+            <!-- Login/Logout -->
+            <a href="login.html" id="loginLink" class="btn-primary"
+              >Iniciar Sesión</a
+            >
+            <button id="logoutBtn" class="btn-secondary" style="display: none">
+              Cerrar Sesión
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ============================================ -->
+    <!-- MAIN -->
+    <!-- ============================================ -->
+    <main>
+      <div class="container">
+        <div class="auth-card">
+          <h2 class="auth-title">Bienvenido</h2>
+
+          <div id="userInfo" class="text-center" style="margin-bottom: 1rem">
+            <p>Cargando...</p>
+          </div>
+
+          <button id="logoutBtn2" class="btn-secondary w-100">
+            Cerrar Sesión
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- ============================================ -->
+    <!-- FOOTER -->
+    <!-- ============================================ -->
+    <footer>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-brand">
+            <h2>TechStore</h2>
+            <p>Potencia tu PC con los mejores componentes</p>
+          </div>
+
+          <div class="footer-links">
+            <a href="faq.html">FAQ</a>
+            <a href="contact.html">Contacto</a>
+            <a href="admin.html">Admin</a>
+          </div>
+
+          <div class="footer-copyright">© 2025 TechStore</div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="js/accessibility.js"></script>
     <script src="js/home.js"></script>
   </body>
 </html>

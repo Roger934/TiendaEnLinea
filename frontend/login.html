@@ -4,40 +4,146 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login - TechStore</title>
+    <link rel="stylesheet" href="css/styles.css" />
   </head>
+
   <body>
-    <h1>Iniciar Sesión - TechStore</h1>
+    <!-- ============================================ -->
+    <!-- HEADER - MISMO DEL INDEX -->
+    <!-- ============================================ -->
+    <header>
+      <div class="container">
+        <div class="header-content">
+          <!-- Logo -->
+          <a href="index.html" class="logo">
+            <img
+              src="https://img.icons8.com/nolan/64/processor.png"
+              alt="TechStore Logo"
+            />
+            <div class="logo-text">
+              <h1>TechStore</h1>
+              <p>Potencia tu PC</p>
+            </div>
+          </a>
 
-    <form id="loginForm">
-      <label>Email:</label><br />
-      <input type="email" id="email" required /><br /><br />
+          <!-- User Info -->
+          <div class="user-info">
+            <!-- Controles de accesibilidad -->
+            <div class="accessibility-controls">
+              <button id="themeToggle" class="icon-btn" title="Cambiar tema">
+                🌙
+              </button>
+              <button
+                id="increaseFontBtn"
+                class="icon-btn"
+                title="Aumentar texto"
+              >
+                A⁺
+              </button>
+              <button
+                id="decreaseFontBtn"
+                class="icon-btn"
+                title="Reducir texto"
+              >
+                A⁻
+              </button>
+            </div>
 
-      <label>Contraseña:</label><br />
-      <input type="password" id="password" required /><br /><br />
+            <!-- Botones login/logout -->
+            <a href="login.html" id="loginLink" class="btn-primary"
+              >Iniciar Sesión</a
+            >
+            <button id="logoutBtn" class="btn-secondary" style="display: none">
+              Cerrar Sesión
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
 
-      <!-- CAPTCHA -->
-      <label>Captcha:</label><br />
-      <div id="captchaContainer" style="margin: 10px 0"></div>
-      <button type="button" id="refreshCaptcha">🔄 Generar nuevo captcha</button
-      ><br /><br />
+    <!-- ============================================ -->
+    <!-- MAIN -->
+    <!-- ============================================ -->
+    <main>
+      <div class="container">
+        <div class="auth-card">
+          <h2 class="auth-title">Iniciar Sesión</h2>
 
-      <input
-        type="text"
-        id="captchaInput"
-        placeholder="Ingresa el texto del captcha"
-        required
-        style="width: 250px"
-      /><br /><br />
-      <input type="hidden" id="captchaToken" />
+          <form id="loginForm" class="auth-form">
+            <div class="form-group">
+              <label>Email:</label>
+              <input type="email" id="email" required />
+            </div>
 
-      <button type="submit">Iniciar Sesión</button>
-    </form>
+            <div class="form-group">
+              <label>Contraseña:</label>
+              <input type="password" id="password" required />
+            </div>
 
-    <p id="message"></p>
-    <p><a href="forgot-password.html">¿Olvidaste tu contraseña?</a></p>
+            <!-- CAPTCHA -->
+            <div class="form-group">
+              <label>Captcha:</label>
+              <div id="captchaContainer" class="captcha-box"></div>
+              <button
+                type="button"
+                id="refreshCaptcha"
+                class="btn-secondary w-100"
+              >
+                🔄 Nuevo captcha
+              </button>
+            </div>
 
-    <p>¿No tienes cuenta? <a href="register.html">Regístrate aquí</a></p>
+            <div class="form-group">
+              <input
+                type="text"
+                id="captchaInput"
+                placeholder="Ingresa el texto del captcha"
+                required
+              />
+              <input type="hidden" id="captchaToken" />
+            </div>
 
+            <button type="submit" class="btn-primary w-100">
+              Iniciar Sesión
+            </button>
+          </form>
+
+          <p id="message" class="auth-message"></p>
+
+          <p class="auth-links">
+            <a href="forgot-password.html">¿Olvidaste tu contraseña?</a>
+          </p>
+
+          <p class="auth-links">
+            ¿No tienes cuenta? <a href="register.html">Crear cuenta</a>
+          </p>
+        </div>
+      </div>
+    </main>
+
+    <!-- ============================================ -->
+    <!-- FOOTER -->
+    <!-- ============================================ -->
+    <footer>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-brand">
+            <h2>TechStore</h2>
+            <p>Potencia tu PC con los mejores componentes</p>
+          </div>
+
+          <div class="footer-links">
+            <a href="faq.html">FAQ</a>
+            <a href="contact.html">Contacto</a>
+            <a href="admin.html">Admin</a>
+          </div>
+
+          <div class="footer-copyright">© 2025 TechStore</div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="js/accessibility.js"></script>
     <script src="js/login.js"></script>
   </body>
 </html>
