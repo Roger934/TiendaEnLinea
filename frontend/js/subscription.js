@@ -1,6 +1,6 @@
 // frontend/js/subscription.js
 
-// No declarar API_URL aquí, ya está en products.js <--------------------------- OJO
+// API_URL ya está declarado en products.js
 // const API_URL = "http://localhost:3000/api";
 
 document
@@ -9,10 +9,16 @@ document
     e.preventDefault();
 
     const email = document.getElementById("subscriptionEmail").value;
-    const messageEl = document.getElementById("subscriptionMessage");
 
-    messageEl.textContent = "Procesando...";
-    messageEl.style.color = "blue";
+    // Mostrar loading
+    Swal.fire({
+      title: "Procesando...",
+      text: "Por favor espera",
+      background: "#1a2038",
+      color: "#e0e7ff",
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading(),
+    });
 
     try {
       const response = await fetch(`${API_URL}/subscription`, {
@@ -26,15 +32,34 @@ document
       const data = await response.json();
 
       if (data.success) {
-        messageEl.textContent = "✅ " + data.message;
-        messageEl.style.color = "green";
+        Swal.fire({
+          icon: "success",
+          title: "¡Suscrito!",
+          text: data.message,
+          background: "#1a2038",
+          color: "#e0e7ff",
+          confirmButtonColor: "#00d4ff",
+        });
+
         document.getElementById("subscriptionForm").reset();
       } else {
-        messageEl.textContent = "❌ " + data.message;
-        messageEl.style.color = "red";
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: data.message,
+          background: "#1a2038",
+          color: "#e0e7ff",
+          confirmButtonColor: "#ff006e",
+        });
       }
     } catch (error) {
-      messageEl.textContent = "❌ Error: " + error.message;
-      messageEl.style.color = "red";
+      Swal.fire({
+        icon: "error",
+        title: "Error de Conexión",
+        text: error.message,
+        background: "#1a2038",
+        color: "#e0e7ff",
+        confirmButtonColor: "#ff006e",
+      });
     }
   });

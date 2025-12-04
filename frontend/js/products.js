@@ -17,6 +17,16 @@ window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("logoutBtn").style.display = "block";
   }
 
+  // Mostrar link de Admin solo si es admin
+  const adminLink = document.getElementById("adminLink");
+  if (adminLink) {
+    if (user.rol === "admin") {
+      adminLink.style.display = "inline-block";
+    } else {
+      adminLink.style.display = "none";
+    }
+  }
+
   // IMPORTANTE: Cargar productos al inicio
   loadProducts();
   updateCartCount();
@@ -26,11 +36,34 @@ window.addEventListener("DOMContentLoaded", () => {
 // LOGOUT
 // ============================================
 document.getElementById("logoutBtn")?.addEventListener("click", () => {
-  localStorage.clear();
-  window.location.reload();
-});
+  // Guardar las preferencias actuales antes de hacer logout
+  const currentTheme = document.body.classList.contains("light-mode")
+    ? "light"
+    : "dark";
+  const currentFontSize = document.body.classList.contains("font-large")
+    ? "large"
+    : document.body.classList.contains("font-small")
+    ? "small"
+    : "normal";
 
-// ... resto del código (loadProducts, displayProducts, etc)
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const userEmail = user.email || "guest";
+
+  // Guardar las preferencias del usuario actual
+  localStorage.setItem(`accessibility_${userEmail}_theme`, currentTheme);
+  localStorage.setItem(`accessibility_${userEmail}_fontSize`, currentFontSize);
+
+  console.log(
+    `💾 Preferencias guardadas para ${userEmail}: ${currentTheme}, ${currentFontSize}`
+  );
+
+  // Limpiar datos de sesión
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+
+  // Recargar página
+  window.location.href = "index.html";
+});
 // ============================================
 // CARGAR PRODUCTOS
 // ============================================
@@ -121,18 +154,63 @@ const displayProducts = (productos) => {
 // ============================================
 // AGREGAR AL CARRITO
 // ============================================
-const addToCart = async (id, nombre, precio) => {
+const addToCart = async (productoId, nombre, precio) => {
   const token = localStorage.getItem("token");
 
-  // Verificación de seguridad
   if (!token) {
-    alert("⚠️ Debes iniciar sesión para agregar productos al carrito");
-    window.location.href = "login.html";
+    promptLogin();
     return;
   }
 
-  // Usuario logueado - Agregar a BD
-  await addToCartDB(id);
+  try {
+    const response = await fetch(`${API_URL}/cart`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        producto_id: productoId,
+        cantidad: 1,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      // ✅ CON SWEETALERT2
+      Swal.fire({
+        icon: "success",
+        title: "¡Agregado!",
+        text: `${nombre} se agregó al carrito`,
+        background: "#1a2038",
+        color: "#e0e7ff",
+        confirmButtonColor: "#00d4ff",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      updateCartCount();
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: data.message,
+        background: "#1a2038",
+        color: "#e0e7ff",
+        confirmButtonColor: "#ff006e",
+      });
+    }
+  } catch (error) {
+    Swal.fire({
+      icon: "error",
+      title: "Error de Conexión",
+      text: error.message,
+      background: "#1a2038",
+      color: "#e0e7ff",
+      confirmButtonColor: "#ff006e",
+    });
+  }
 };
 
 // ============================================
@@ -251,10 +329,23 @@ document.getElementById("limpiarBtn").addEventListener("click", () => {
 // PEDIR LOGIN SI INTENTA AGREGAR SIN ESTAR LOGUEADO
 // ============================================
 const promptLogin = () => {
-  alert("⚠️ Debes iniciar sesión para agregar productos al carrito");
-  window.location.href = "login.html";
+  Swal.fire({
+    icon: "info",
+    title: "Inicia sesión",
+    text: "Debes iniciar sesión para agregar productos al carrito",
+    showCancelButton: true,
+    confirmButtonText: "Ir a Login",
+    cancelButtonText: "Cancelar",
+    background: "#1a2038",
+    color: "#e0e7ff",
+    confirmButtonColor: "#00d4ff",
+    cancelButtonColor: "#64748b",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      window.location.href = "login.html";
+    }
+  });
 };
-
 // ============================================
 // VER CARRITO
 // ============================================

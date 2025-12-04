@@ -4,47 +4,150 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Contacto - TechStore</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <!-- SweetAlert2 -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Alerts personalizados -->
+    <script src="js/alerts.js"></script>
   </head>
+
   <body>
-    <h1>Contacto - TechStore</h1>
+    <!-- ============================================ -->
+    <!-- HEADER (igual que en toda la tienda) -->
+    <!-- ============================================ -->
+    <header>
+      <div class="container">
+        <div class="header-content">
+          <!-- Logo -->
+          <a href="index.html" class="logo">
+            <img
+              src="https://img.icons8.com/nolan/64/processor.png"
+              alt="TechStore Logo"
+            />
+            <div class="logo-text">
+              <h1>TechStore</h1>
+              <p>Potencia tu PC</p>
+            </div>
+          </a>
 
-    <p><a href="index.html">← Volver a la tienda</a></p>
+          <div class="user-info">
+            <!-- Carrito -->
+            <a href="cart.html" class="cart-icon-btn">
+              🛒
+              <span id="cartCount" class="cart-count">0</span>
+            </a>
 
-    <hr />
+            <!-- Nombre del usuario -->
+            <span id="userName" class="user-name" style="display: none"></span>
 
-    <h2>¿Tienes alguna pregunta?</h2>
-    <p>Envíanos un mensaje y te responderemos lo antes posible.</p>
+            <!-- Accesibilidad -->
+            <div class="accessibility-controls">
+              <button
+                id="themeToggle"
+                class="icon-btn"
+                title="Modo claro/oscuro"
+              >
+                🌙
+              </button>
+              <button
+                id="increaseFontBtn"
+                class="icon-btn"
+                title="Aumentar texto"
+              >
+                A⁺
+              </button>
+              <button
+                id="decreaseFontBtn"
+                class="icon-btn"
+                title="Reducir texto"
+              >
+                A⁻
+              </button>
+            </div>
 
-    <form id="contactForm">
-      <label>Nombre:</label><br />
-      <input
-        type="text"
-        id="nombre"
-        required
-        style="width: 400px; padding: 8px"
-      /><br /><br />
+            <a href="login.html" id="loginLink" class="btn-primary"
+              >Iniciar Sesión</a
+            >
+            <button id="logoutBtn" class="btn-secondary" style="display: none">
+              Cerrar Sesión
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
 
-      <label>Email:</label><br />
-      <input
-        type="email"
-        id="email"
-        required
-        style="width: 400px; padding: 8px"
-      /><br /><br />
+    <!-- ============================================ -->
+    <!-- MAIN -->
+    <!-- ============================================ -->
+    <main>
+      <div class="container">
+        <div class="auth-card">
+          <h2 class="auth-title">Contacto</h2>
 
-      <label>Mensaje:</label><br />
-      <textarea
-        id="mensaje"
-        required
-        style="width: 400px; height: 150px; padding: 8px"
-      ></textarea
-      ><br /><br />
+          <p class="text-center" style="margin-bottom: 1rem">
+            ¿Tienes alguna pregunta? Envíanos un mensaje y te responderemos
+            pronto.
+          </p>
 
-      <button type="submit" style="padding: 10px 20px">Enviar Mensaje</button>
-    </form>
+          <form id="contactForm" class="auth-form">
+            <div class="form-group">
+              <label>Nombre:</label>
+              <input type="text" id="nombre" required />
+            </div>
 
-    <p id="message"></p>
+            <div class="form-group">
+              <label>Email:</label>
+              <input type="email" id="email" required />
+            </div>
 
+            <div class="form-group">
+              <label>Mensaje:</label>
+              <textarea id="mensaje" rows="5" required></textarea>
+            </div>
+
+            <button type="submit" class="btn-primary w-100">
+              Enviar Mensaje
+            </button>
+          </form>
+
+          <p id="message" class="auth-message"></p>
+
+          <p class="auth-links">
+            <a href="index.html">← Volver a la tienda</a>
+          </p>
+        </div>
+      </div>
+    </main>
+
+    <!-- ============================================ -->
+    <!-- FOOTER -->
+    <!-- ============================================ -->
+    <footer>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-brand">
+            <h2>TechStore</h2>
+            <p>Potencia tu PC con los mejores componentes</p>
+          </div>
+
+          <div class="footer-links">
+            <a href="faq.html">FAQ</a>
+            <a href="nosotros.html">Nosotros</a>
+            <a href="contact.html">Contacto</a>
+            <a href="admin.html">Admin</a>
+          </div>
+
+          <div class="footer-copyright">© 2025 TechStore</div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="js/accessibility.js"></script>
     <script src="js/contact.js"></script>
   </body>
 </html>

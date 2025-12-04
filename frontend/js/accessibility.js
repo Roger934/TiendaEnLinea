@@ -2,15 +2,21 @@
 
 // ============================================
 // ACCESIBILIDAD: MODO OSCURO/CLARO + TAMAÑO TEXTO
+// CADA USUARIO TIENE SUS PROPIAS PREFERENCIAS
 // ============================================
 
 class AccessibilityManager {
   constructor() {
+    this.currentUser = null;
     this.init();
   }
 
   init() {
-    // Cargar preferencias guardadas
+    // Obtener usuario actual
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    this.currentUser = user.email || "guest";
+
+    // Cargar preferencias del usuario
     this.loadPreferences();
 
     // Event listeners
@@ -41,6 +47,13 @@ class AccessibilityManager {
   }
 
   // ============================================
+  // OBTENER CLAVE DE PREFERENCIAS POR USUARIO
+  // ============================================
+  getPreferenceKey(preference) {
+    return `accessibility_${this.currentUser}_${preference}`;
+  }
+
+  // ============================================
   // TEMA CLARO/OSCURO
   // ============================================
   toggleTheme() {
@@ -56,13 +69,13 @@ class AccessibilityManager {
       body.classList.remove("light-mode");
     }
 
-    // Guardar preferencia
-    localStorage.setItem("theme", newTheme);
+    // Guardar preferencia POR USUARIO
+    localStorage.setItem(this.getPreferenceKey("theme"), newTheme);
 
     // Actualizar icono del botón
     this.updateThemeIcon(newTheme);
 
-    console.log(`✅ Tema cambiado a: ${newTheme}`);
+    console.log(`✅ [${this.currentUser}] Tema cambiado a: ${newTheme}`);
   }
 
   updateThemeIcon(theme) {
@@ -82,13 +95,13 @@ class AccessibilityManager {
     if (body.classList.contains("font-small")) {
       // De small a normal
       body.classList.remove("font-small");
-      localStorage.setItem("fontSize", "normal");
-      console.log("✅ Tamaño de texto: Normal");
+      localStorage.setItem(this.getPreferenceKey("fontSize"), "normal");
+      console.log(`✅ [${this.currentUser}] Tamaño de texto: Normal`);
     } else if (!body.classList.contains("font-large")) {
       // De normal a large
       body.classList.add("font-large");
-      localStorage.setItem("fontSize", "large");
-      console.log("✅ Tamaño de texto: Grande");
+      localStorage.setItem(this.getPreferenceKey("fontSize"), "large");
+      console.log(`✅ [${this.currentUser}] Tamaño de texto: Grande`);
     } else {
       console.log("⚠️ Ya estás en el tamaño máximo");
     }
@@ -100,24 +113,25 @@ class AccessibilityManager {
     if (body.classList.contains("font-large")) {
       // De large a normal
       body.classList.remove("font-large");
-      localStorage.setItem("fontSize", "normal");
-      console.log("✅ Tamaño de texto: Normal");
+      localStorage.setItem(this.getPreferenceKey("fontSize"), "normal");
+      console.log(`✅ [${this.currentUser}] Tamaño de texto: Normal`);
     } else if (!body.classList.contains("font-small")) {
       // De normal a small
       body.classList.add("font-small");
-      localStorage.setItem("fontSize", "small");
-      console.log("✅ Tamaño de texto: Pequeño");
+      localStorage.setItem(this.getPreferenceKey("fontSize"), "small");
+      console.log(`✅ [${this.currentUser}] Tamaño de texto: Pequeño`);
     } else {
       console.log("⚠️ Ya estás en el tamaño mínimo");
     }
   }
 
   // ============================================
-  // CARGAR PREFERENCIAS
+  // CARGAR PREFERENCIAS POR USUARIO
   // ============================================
   loadPreferences() {
-    this.theme = localStorage.getItem("theme") || "dark";
-    this.fontSize = localStorage.getItem("fontSize") || "normal";
+    this.theme = localStorage.getItem(this.getPreferenceKey("theme")) || "dark";
+    this.fontSize =
+      localStorage.getItem(this.getPreferenceKey("fontSize")) || "normal";
   }
 
   applyPreferences() {
@@ -126,10 +140,13 @@ class AccessibilityManager {
     // Aplicar tema
     if (this.theme === "light") {
       body.classList.add("light-mode");
+    } else {
+      body.classList.remove("light-mode");
     }
     this.updateThemeIcon(this.theme);
 
     // Aplicar tamaño de texto
+    body.classList.remove("font-small", "font-large"); // Limpiar primero
     if (this.fontSize === "small") {
       body.classList.add("font-small");
     } else if (this.fontSize === "large") {
@@ -137,7 +154,28 @@ class AccessibilityManager {
     }
 
     console.log(
-      `🎨 Preferencias cargadas: Tema ${this.theme}, Texto ${this.fontSize}`
+      `🎨 [${this.currentUser}] Preferencias cargadas: Tema ${this.theme}, Texto ${this.fontSize}`
+    );
+  }
+
+  // ============================================
+  // GUARDAR PREFERENCIAS MANUALMENTE
+  // ============================================
+  savePreferences() {
+    const currentTheme = document.body.classList.contains("light-mode")
+      ? "light"
+      : "dark";
+    const currentFontSize = document.body.classList.contains("font-large")
+      ? "large"
+      : document.body.classList.contains("font-small")
+      ? "small"
+      : "normal";
+
+    localStorage.setItem(this.getPreferenceKey("theme"), currentTheme);
+    localStorage.setItem(this.getPreferenceKey("fontSize"), currentFontSize);
+
+    console.log(
+      `💾 [${this.currentUser}] Preferencias guardadas: ${currentTheme}, ${currentFontSize}`
     );
   }
 }
@@ -145,7 +183,30 @@ class AccessibilityManager {
 // ============================================
 // INICIALIZAR AL CARGAR LA PÁGINA
 // ============================================
+let accessibilityManager = null;
+
 document.addEventListener("DOMContentLoaded", () => {
-  new AccessibilityManager();
+  accessibilityManager = new AccessibilityManager();
   console.log("♿ Sistema de accesibilidad inicializado");
+});
+
+// ============================================
+// GUARDAR PREFERENCIAS ANTES DE SALIR
+// ============================================
+window.addEventListener("beforeunload", () => {
+  if (accessibilityManager) {
+    accessibilityManager.savePreferences();
+  }
+});
+
+// ============================================
+// REINICIAR CUANDO CAMBIA EL USUARIO (LOGIN/LOGOUT)
+// ============================================
+window.addEventListener("storage", (e) => {
+  if (e.key === "user" || e.key === "token") {
+    console.log("🔄 Usuario cambió, recargando preferencias...");
+    if (accessibilityManager) {
+      accessibilityManager.init();
+    }
+  }
 });
