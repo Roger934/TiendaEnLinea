@@ -1,6 +1,6 @@
 // frontend/js/subscription.js
 
-const API_URL = "https://tiendaenlinea-eqmj.onrender.com/api";
+window.API_URL = "https://tiendaenlinea-eqmj.onrender.com/api";
 
 document
   .getElementById("subscriptionForm")
