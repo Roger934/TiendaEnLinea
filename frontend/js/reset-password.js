@@ -1,3 +1,38 @@
+// frontend/js/reset-password.js
+
+const API_URL = "https://tiendaenlinea-eqmj.onrender.com/api";
+
+// ----------------------------
+// 1️⃣ Obtener token de la URL
+// ----------------------------
+const urlParams = new URLSearchParams(window.location.search);
+const token = urlParams.get("token");
+
+// ----------------------------
+// 2️⃣ Validar que exista el token
+// ----------------------------
+if (!token) {
+  Swal.fire({
+    icon: "error",
+    title: "Token No Encontrado",
+    text: "El enlace de recuperación no es válido",
+    background: "#1a2038",
+    color: "#e0e7ff",
+    confirmButtonColor: "#ff006e",
+  }).then(() => {
+    window.location.href = "login.html";
+  });
+
+  const form = document.getElementById("resetPasswordForm");
+  if (form) form.style.display = "none";
+
+  // Detener ejecución
+  throw new Error("Token no encontrado");
+}
+
+// ----------------------------
+// 3️⃣ Evento submit del formulario
+// ----------------------------
 document
   .getElementById("resetPasswordForm")
   .addEventListener("submit", async (e) => {
@@ -19,11 +54,15 @@ document
       return;
     }
 
-    // **AQUÍ AGREGAMOS LOS LOGS**
-    console.log("Token enviado al backend:", token);
-    console.log("Nueva contraseña:", newPassword);
+    // ----------------------------
+    // 4️⃣ Mostrar logs para depuración
+    // ----------------------------
+    console.log("🔑 Token enviado al backend:", token);
+    console.log("🔑 Nueva contraseña:", newPassword);
 
-    // Mostrar loading
+    // ----------------------------
+    // 5️⃣ Mostrar loading
+    // ----------------------------
     Swal.fire({
       title: "Actualizando contraseña...",
       text: "Por favor espera",
@@ -33,6 +72,9 @@ document
       didOpen: () => Swal.showLoading(),
     });
 
+    // ----------------------------
+    // 6️⃣ Enviar petición al backend
+    // ----------------------------
     try {
       const response = await fetch(`${API_URL}/auth/reset-password`, {
         method: "POST",
@@ -43,7 +85,11 @@ document
       });
 
       const data = await response.json();
+      console.log("📥 Respuesta del backend:", data);
 
+      // ----------------------------
+      // 7️⃣ Manejo de la respuesta
+      // ----------------------------
       if (data.success) {
         Swal.fire({
           icon: "success",
@@ -61,7 +107,7 @@ document
         Swal.fire({
           icon: "error",
           title: "Error",
-          text: data.message,
+          text: data.message || "No se pudo actualizar la contraseña",
           background: "#1a2038",
           color: "#e0e7ff",
           confirmButtonColor: "#ff006e",
