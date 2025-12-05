@@ -15,12 +15,16 @@ const PORT = process.env.PORT || 3000;
 // ============================================
 
 // CORS - Permitir peticiones del frontend
+// CORS
 app.use(
   cors({
-    origin: "*", // ← CAMBIO AQUÍ: Permitir cualquier origen
+    origin: "*",
     credentials: true,
   })
 );
+
+// HABILITAR PETICIONES OPTIONS (preflight)
+app.options("*", cors());
 
 // Parsear JSON en el body de las peticiones
 app.use(express.json());
