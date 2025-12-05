@@ -39,7 +39,12 @@ document.getElementById("logoutBtn").addEventListener("click", () => {
 // ============================================
 const loadProducts = async () => {
   try {
-    const response = await fetch(`${API_URL}/products`);
+    const response = await fetch(`${API_URL}/admin/products`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
     const data = await response.json();
 
     if (data.success) {
@@ -47,8 +52,6 @@ const loadProducts = async () => {
     }
   } catch (error) {
     console.error("Error:", error);
-    document.getElementById("productsContainer").innerHTML =
-      "<p>Error al cargar productos</p>";
   }
 };
 

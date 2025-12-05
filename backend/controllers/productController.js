@@ -13,7 +13,7 @@ const getAllProducts = async (req, res) => {
             SELECT p.*, c.nombre as categoria_nombre 
             FROM productos p 
             JOIN categorias c ON p.categoria_id = c.id
-            WHERE 1=1
+            WHERE 1=1 AND p.activo = 1
         `;
     const params = [];
 
@@ -70,7 +70,7 @@ const getProductsByCategory = async (req, res) => {
       `SELECT p.*, c.nombre as categoria_nombre 
              FROM productos p 
              JOIN categorias c ON p.categoria_id = c.id
-             WHERE p.categoria_id = ?
+             WHERE p.categoria_id = ? AND p.activo = 1
              ORDER BY p.id DESC`,
       [categoryId]
     );
@@ -101,7 +101,7 @@ const getProductById = async (req, res) => {
       `SELECT p.*, c.nombre as categoria_nombre 
              FROM productos p 
              JOIN categorias c ON p.categoria_id = c.id
-             WHERE p.id = ?`,
+             WHERE p.id = ? AND p.activo = 1`,
       [id]
     );
 

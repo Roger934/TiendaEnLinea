@@ -133,7 +133,13 @@ const deleteProduct = async (req, res) => {
       });
     }
 
-    await pool.query("DELETE FROM productos WHERE id = ?", [id]);
+    // SOFT DELETE – Dar de baja sin eliminar físicamente
+    await pool.query("UPDATE productos SET activo = 0 WHERE id = ?", [id]);
+
+    res.json({
+      success: true,
+      message: "Producto dado de baja exitosamente",
+    });
 
     res.json({
       success: true,

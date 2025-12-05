@@ -40,12 +40,21 @@ const createOrder = async (req, res) => {
     const [cartItems] = await connection.query(
       `SELECT c.*, p.nombre, p.precio, p.stock 
              FROM carrito c
-             JOIN productos p ON c.producto_id = p.id
+             JOIN productos p ON c.producto_id = p.id AND p.activo = 1
              WHERE c.usuario_id = ?`,
       [usuario_id]
     );
 
     if (cartItems.length === 0) {
+      for (const item of cartItems) {
+        if (item.activo === 0) {
+          await connection.rollback();
+          return res.status(400).json({
+            success: false,
+            message: `El producto "${item.nombre}" ya no está disponible`,
+          });
+        }
+      }
       await connection.rollback();
       return res.status(400).json({
         success: false,

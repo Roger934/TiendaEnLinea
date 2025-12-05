@@ -19,9 +19,16 @@ const addToCart = async (req, res) => {
 
     // Verificar que el producto existe y tiene stock
     const [producto] = await pool.query(
-      "SELECT id, nombre, stock FROM productos WHERE id = ?",
+      "SELECT id, nombre, stock, activo FROM productos WHERE id = ?",
       [producto_id]
     );
+
+    if (producto[0].activo === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Este producto ya no está disponible",
+      });
+    }
 
     if (producto.length === 0) {
       return res.status(404).json({
@@ -96,7 +103,7 @@ const getCart = async (req, res) => {
       `SELECT c.id, c.cantidad, c.producto_id,
                     p.nombre, p.precio, p.imagen_url, p.stock
              FROM carrito c
-             JOIN productos p ON c.producto_id = p.id
+             JOIN productos p ON c.producto_id = p.id AND p.activo = 1
              WHERE c.usuario_id = ?`,
       [usuario_id]
     );
