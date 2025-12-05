@@ -313,70 +313,77 @@ const forgotPassword = async (req, res) => {
       [user.id, token, expiraEn]
     );
 
-    // Construir URL de reset (HARDCODEADO)
-    const resetLink = `${process.env.FRONTEND_URL}/reset-password.html?token=${token}`;
+    // Construir URL de reset
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password.html?token=${token}`;
 
     // Enviar email
     const htmlContent = `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-                <div style="text-align: center; margin-bottom: 30px;">
-                    <h1 style="color: #333; margin: 0;">TechStore</h1>
-                    <p style="color: #666; margin: 5px 0;">Potencia tu PC</p>
-                </div>
+  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0a0e27; color: #e0e7ff; border-radius: 12px; overflow: hidden;">
+    
+    <!-- HEADER CON LOGO -->
+    <div style="background: linear-gradient(135deg, #00d4ff, #b537f2); padding: 2rem; text-align: center;">
+      <img src="https://img.icons8.com/nolan/64/processor.png" 
+           alt="TechStore Logo" 
+           style="width: 80px; height: 80px; margin-bottom: 1rem;">
+      <h1 style="color: white; margin: 0; font-size: 2rem;">TechStore</h1>
+      <p style="color: white; margin: 0.5rem 0 0 0;">Potencia tu PC</p>
+    </div>
 
-                <h2 style="color: #333;">Recuperación de Contraseña</h2>
-                
-                <p style="color: #555; line-height: 1.6;">
-                    Hola <strong>${user.nombre}</strong>,
-                </p>
-                
-                <p style="color: #555; line-height: 1.6;">
-                    Recibimos una solicitud para restablecer tu contraseña en TechStore.
-                </p>
+    <!-- CONTENIDO -->
+    <div style="padding: 2rem;">
+      <h2 style="color: #00d4ff;">Recuperación de Contraseña</h2>
+      
+      <p style="color: #e0e7ff; line-height: 1.6;">
+        Hola <strong style="color: #00d4ff;">${user.nombre}</strong>,
+      </p>
+      
+      <p style="color: #e0e7ff; line-height: 1.6;">
+        Recibimos una solicitud para restablecer tu contraseña.
+      </p>
 
-                <p style="color: #555; line-height: 1.6;">
-                    Haz click en el siguiente botón para crear una nueva contraseña:
-                </p>
+      <div style="text-align: center; margin: 2rem 0;">
+        <a href="${resetUrl}" 
+           style="background: linear-gradient(135deg, #00d4ff, #b537f2); 
+                  color: white; 
+                  padding: 1rem 2rem; 
+                  text-decoration: none; 
+                  border-radius: 8px; 
+                  display: inline-block;
+                  font-weight: 600;">
+          Restablecer Contraseña
+        </a>
+      </div>
 
-                <div style="text-align: center; margin: 30px 0;">
-                    <a href="${resetUrl}" 
-                       style="background-color: #333; color: white; padding: 15px 30px; 
-                              text-decoration: none; border-radius: 5px; display: inline-block;">
-                        Restablecer Contraseña
-                    </a>
-                </div>
+      <p style="color: #888; font-size: 0.9rem; line-height: 1.6;">
+        O copia y pega este enlace en tu navegador:
+      </p>
+      <p style="color: #00d4ff; word-break: break-all; font-size: 0.85rem; background: #1a2038; padding: 1rem; border-radius: 8px;">
+        ${resetUrl}
+      </p>
 
-                <p style="color: #555; line-height: 1.6; font-size: 14px;">
-                    O copia y pega este enlace en tu navegador:
-                </p>
-                <p style="color: #0066cc; word-break: break-all; font-size: 12px;">
-                    ${resetUrl}
-                </p>
+      <div style="background-color: #2a1a3a; border-left: 4px solid #ff006e; padding: 1rem; margin: 1.5rem 0; border-radius: 4px;">
+        <p style="margin: 0; color: #e0e7ff; font-size: 0.9rem;">
+          ⚠️ <strong>Importante:</strong> Este enlace expira en 1 hora.
+        </p>
+      </div>
 
-                <div style="background-color: #fff3cd; border: 1px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 5px;">
-                    <p style="margin: 0; color: #856404; font-size: 14px;">
-                        ⚠️ <strong>Importante:</strong> Este enlace expira en 1 hora.
-                    </p>
-                </div>
+      <p style="color: #888; line-height: 1.6; font-size: 0.9rem;">
+        Si no solicitaste este cambio, puedes ignorar este correo.
+      </p>
+    </div>
 
-                <p style="color: #555; line-height: 1.6;">
-                    Si no solicitaste este cambio, puedes ignorar este correo.
-                </p>
-
-                <div style="text-align: center; margin: 40px 0;">
-                    <p style="color: #666; margin: 0;">
-                        <strong>TechStore</strong><br>
-                        Potencia tu PC
-                    </p>
-                </div>
-
-                <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
-
-                <p style="color: #999; font-size: 12px; text-align: center;">
-                    TechStore | Proyecto Académico 2025
-                </p>
-            </div>
-        `;
+    <!-- FOOTER -->
+    <div style="background: #151b3d; padding: 1.5rem; text-align: center;">
+      <p style="color: #888; margin: 0; font-size: 0.9rem;">
+        <strong style="color: #00d4ff;">TechStore</strong><br>
+        Potencia tu PC
+      </p>
+      <p style="color: #666; font-size: 12px; margin: 1rem 0 0 0;">
+        © 2025 TechStore | Proyecto Académico
+      </p>
+    </div>
+  </div>
+`;
 
     await sendSimpleEmail(
       user.email,
