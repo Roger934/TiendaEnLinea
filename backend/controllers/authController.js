@@ -314,7 +314,9 @@ const forgotPassword = async (req, res) => {
     );
 
     // Construir URL de reset
-    const resetUrl = `${process.env.FRONTEND_URL}/reset-password.html?token=${token}`;
+    const resetUrl = `${
+      process.env.FRONTEND_URL
+    }/reset-password.html?token=${encodeURIComponent(token)}`;
 
     // Enviar email
     const htmlContent = `

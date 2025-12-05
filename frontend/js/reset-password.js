@@ -8,6 +8,9 @@ const API_URL = "https://tiendaenlinea-eqmj.onrender.com/api";
 const urlParams = new URLSearchParams(window.location.search);
 const token = urlParams.get("token");
 
+// Agregar aquí
+console.log("Token recibido desde URL:", token);
+
 // ----------------------------
 // 2️⃣ Validar que exista el token
 // ----------------------------
