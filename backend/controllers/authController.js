@@ -314,7 +314,7 @@ const forgotPassword = async (req, res) => {
     );
 
     // Construir URL de reset (HARDCODEADO)
-    const resetUrl = `http://localhost:5500/frontend/reset-password.html?token=${token}`;
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password.html?token=${token}`;
 
     // Enviar email
     const htmlContent = `
