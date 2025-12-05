@@ -1,25 +1,3 @@
-// frontend/js/reset-password.js
-
-const API_URL = "https://tiendaenlinea-eqmj.onrender.com/api";
-
-// Obtener token de la URL
-const urlParams = new URLSearchParams(window.location.search);
-const token = urlParams.get("token");
-
-if (!token) {
-  Swal.fire({
-    icon: "error",
-    title: "Token No Encontrado",
-    text: "El enlace de recuperación no es válido",
-    background: "#1a2038",
-    color: "#e0e7ff",
-    confirmButtonColor: "#ff006e",
-  }).then(() => {
-    window.location.href = "login.html";
-  });
-  document.getElementById("resetPasswordForm").style.display = "none";
-}
-
 document
   .getElementById("resetPasswordForm")
   .addEventListener("submit", async (e) => {
@@ -40,6 +18,10 @@ document
       });
       return;
     }
+
+    // **AQUÍ AGREGAMOS LOS LOGS**
+    console.log("Token enviado al backend:", token);
+    console.log("Nueva contraseña:", newPassword);
 
     // Mostrar loading
     Swal.fire({
