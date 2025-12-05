@@ -412,7 +412,7 @@ const resetPassword = async (req, res) => {
   try {
     const { token, newPassword } = req.body;
 
-    console.log("🔍 Token recibido:", token); // LOG 1
+    console.log("🔍 Token recibido:", token);
 
     if (!token || !newPassword) {
       return res.status(400).json({
@@ -431,30 +431,37 @@ const resetPassword = async (req, res) => {
     // Buscar token válido
     const [tokens] = await pool.query(
       `SELECT * FROM password_reset_tokens 
-     WHERE token = ? AND usado = 0`,
+       WHERE token = ? AND usado = 0`,
       [token]
     );
 
     console.log("🔍 Tokens encontrados:", tokens.length);
-    if (tokens.length > 0) {
-      console.log("🔍 Token encontrado:", tokens[0]);
 
-      // Verificar manualmente si expiró
-      const now = new Date();
-      const expiraEn = new Date(tokens[0].expira_en);
-      console.log("⏰ Ahora:", now);
-      console.log("⏰ Expira:", expiraEn);
-
-      if (now > expiraEn) {
-        console.log("⏰ Token expirado");
-        return res.status(400).json({
-          success: false,
-          message: "Token expirado",
-        });
-      }
+    // ✅ VALIDAR SI NO HAY TOKENS PRIMERO
+    if (tokens.length === 0) {
+      console.log("❌ Token no encontrado o ya usado");
+      return res.status(400).json({
+        success: false,
+        message: "Token inválido o ya usado",
+      });
     }
 
     const resetToken = tokens[0];
+
+    // Verificar si expiró
+    const now = new Date();
+    const expiraEn = new Date(resetToken.expira_en);
+
+    console.log("⏰ Ahora:", now);
+    console.log("⏰ Expira:", expiraEn);
+
+    if (now > expiraEn) {
+      console.log("⏰ Token expirado");
+      return res.status(400).json({
+        success: false,
+        message: "El token ha expirado. Solicita uno nuevo.",
+      });
+    }
 
     // Cifrar nueva contraseña
     const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -465,18 +472,20 @@ const resetPassword = async (req, res) => {
       resetToken.usuario_id,
     ]);
 
-    // Marcar token como usado
+    // Marcar token como usado (usar 1 en lugar de true para MySQL)
     await pool.query(
-      "UPDATE password_reset_tokens SET usado = true WHERE id = ?",
+      "UPDATE password_reset_tokens SET usado = 1 WHERE id = ?",
       [resetToken.id]
     );
+
+    console.log("✅ Contraseña actualizada exitosamente");
 
     res.json({
       success: true,
       message: "Contraseña actualizada exitosamente",
     });
   } catch (error) {
-    console.error("Error en resetPassword:", error);
+    console.error("❌ Error en resetPassword:", error);
     res.status(500).json({
       success: false,
       message: "Error al restablecer contraseña",
