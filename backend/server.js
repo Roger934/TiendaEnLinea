@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 3000;
 // ============================================
 
 // CORS - Permitir peticiones del frontend
-aapp.use(cors());
+app.use(cors());
 
 // Parsear JSON en el body de las peticiones
 app.use(express.json());
