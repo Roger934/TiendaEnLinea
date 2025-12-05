@@ -5,7 +5,7 @@ const router = express.Router();
 const adminController = require("../controllers/adminController");
 const { verifyToken } = require("../middleware/auth");
 const { upload } = require("../config/cloudinary");
-const { pool } = require("../config/database"); // ← AGREGADO
+const { pool } = require("../config/database");
 
 const verifyAdmin = (req, res, next) => {
   if (req.user.rol !== "admin") {
@@ -30,13 +30,13 @@ router.get("/products", verifyToken, verifyAdmin, async (req, res) => {
         ORDER BY p.id DESC
       `);
 
-    res.json({
+    return res.json({
       success: true,
       productos,
     });
   } catch (error) {
     console.error("Error en GET /admin/products:", error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Error al obtener productos",
     });
