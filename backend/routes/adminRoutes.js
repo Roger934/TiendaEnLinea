@@ -5,9 +5,7 @@ const router = express.Router();
 const adminController = require("../controllers/adminController");
 const { verifyToken } = require("../middleware/auth");
 const { upload } = require("../config/cloudinary");
-
-// Todas las rutas requieren autenticación Y rol de admin
-// Agregamos un middleware para verificar que sea admin
+const { pool } = require("../config/database"); // ← AGREGADO
 
 const verifyAdmin = (req, res, next) => {
   if (req.user.rol !== "admin") {
@@ -19,7 +17,33 @@ const verifyAdmin = (req, res, next) => {
   next();
 };
 
-// CRUD de Productos
+// ============================================
+// GET TODOS LOS PRODUCTOS (SOLO ACTIVOS)
+// ============================================
+router.get("/products", verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const [productos] = await pool.query(`
+        SELECT p.*, c.nombre AS categoria_nombre
+        FROM productos p
+        JOIN categorias c ON p.categoria_id = c.id
+        WHERE p.activo = 1
+        ORDER BY p.id DESC
+      `);
+
+    res.json({
+      success: true,
+      productos,
+    });
+  } catch (error) {
+    console.error("Error en GET /admin/products:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error al obtener productos",
+    });
+  }
+});
+
+// CRUD de productos
 router.post(
   "/products",
   verifyToken,
@@ -54,28 +78,6 @@ router.get(
   adminController.getInventory
 );
 
-/**
- * @swagger
- * /api/admin/upload-image:
- *   post:
- *     summary: Subir imagen a Cloudinary
- *     tags: [Admin]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             type: object
- *             properties:
- *               image:
- *                 type: string
- *                 format: binary
- *     responses:
- *       200:
- *         description: Imagen subida exitosamente
- */
 router.post(
   "/upload-image",
   verifyToken,
